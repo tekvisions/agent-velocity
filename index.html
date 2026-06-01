@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Velocity — the open-source coding-agent race</title>
+<meta name="description" content="A live leaderboard ranking open-source coding agents by shipping velocity — commit cadence, release recency, and 4-week trend. Who's winning the race to build the best coding agent? Updated daily by an AI agent.">
+<meta property="og:title" content="Agent Velocity — the coding-agent race, live">
+<meta property="og:description" content="Who's shipping fastest? Open-source coding agents ranked by real GitHub velocity, updated daily by an agent.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="favicon.svg">
+<style>
+  :root{
+    --ink:#16140f;--ink-soft:#3b372f;--paper:#f4f1ea;--paper-2:#ebe7dd;--paper-3:#e3ddd0;
+    --line:#d9d3c6;--muted:#7a7264;--accent:#c2410c;--sea:#0f766e;--sea-soft:#13988c;--gold:#b8860b;
+    --serif:"Fraunces",Georgia,serif;--mono:"JetBrains Mono",ui-monospace,monospace;--ease:cubic-bezier(.2,.7,.2,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:var(--serif);-webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:hidden}
+  ::selection{background:var(--accent);color:var(--paper)}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 36px}
+  .mono{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+  a{color:inherit}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(9px);background:color-mix(in srgb,var(--paper) 78%,transparent);border-bottom:1px solid transparent;transition:border-color .4s}
+  nav.scrolled{border-color:var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:66px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:500;font-size:17px;letter-spacing:-.01em;text-decoration:none}
+  .mark{width:24px;height:24px;position:relative;flex:0 0 auto}
+  .mark::before,.mark::after{content:"";position:absolute;border-radius:50%;border:1.5px solid var(--ink)}
+  .mark::before{inset:0}.mark::after{inset:6px;background:var(--accent);border-color:var(--accent)}
+  .brand b{font-weight:600}.brand .by{color:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.1em}
+  .nav-links{display:flex;gap:26px;align-items:center}
+  .nav-links a{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-decoration:none;opacity:.65;transition:opacity .25s}
+  .nav-links a:hover{opacity:1}
+  @media(max-width:720px){.nav-links a.hidem{display:none}}
+
+  header.hero{padding:128px 0 30px}
+  .eyebrow{display:flex;align-items:center;gap:12px;color:var(--muted);margin-bottom:24px;flex-wrap:wrap}
+  .eyebrow .dot{width:7px;height:7px;background:var(--accent);border-radius:50%;animation:pulse 2.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(194,65,12,.4)}50%{opacity:.4;box-shadow:0 0 0 6px rgba(194,65,12,0)}}
+  h1{font-size:clamp(40px,6.5vw,84px);font-weight:300;line-height:.97;letter-spacing:-.035em;max-width:15ch}
+  h1 em{color:var(--accent)}
+  .lede{margin-top:24px;font-size:clamp(17px,1.9vw,21px);max-width:56ch;color:var(--ink-soft);font-weight:300}
+  .meta-row{display:flex;gap:34px;margin-top:30px;flex-wrap:wrap}
+  .meta-row .m b{display:block;font-size:30px;font-weight:400;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+  .meta-row .m span{color:var(--muted);font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase}
+
+  /* podium (top 3) */
+  .podium{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;border-top:1px solid var(--line);margin-top:38px;padding-top:34px}
+  .pod{border:1px solid var(--line);background:var(--paper-2);padding:24px 22px;position:relative;overflow:hidden;text-decoration:none;color:inherit;transition:transform .35s var(--ease),background .35s}
+  .pod::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease)}
+  .pod.p1::before{background:var(--gold)}.pod.p2::before{background:var(--muted)}.pod.p3::before{background:var(--accent)}
+  .pod:hover{transform:translateY(-3px);background:var(--paper-3)}.pod:hover::before{transform:scaleX(1)}
+  .pod .pr{font-family:var(--mono);font-size:13px;letter-spacing:.1em;color:var(--muted);display:flex;align-items:center;gap:8px}
+  .pod .medal{font-size:20px}
+  .pod h3{font-size:clamp(22px,2.6vw,30px);font-weight:400;letter-spacing:-.02em;margin:12px 0 6px}
+  .pod .vel{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500}
+  .pod p{color:var(--ink-soft);font-size:13.5px;font-weight:300;margin-top:8px;font-family:var(--serif)}
+  @media(max-width:760px){.podium{grid-template-columns:1fr}}
+
+  .controls{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:46px;padding-top:30px}
+  .filters{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);background:transparent;border-radius:30px;padding:8px 14px;cursor:pointer;transition:.25s}
+  .chip:hover{border-color:var(--ink);color:var(--ink)}.chip.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .sortnote{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.05em}
+
+  .board{margin-top:16px;border-top:1px solid var(--line)}
+  .lrow{display:grid;grid-template-columns:54px 1.6fr 150px 130px 96px;gap:20px;align-items:center;padding:20px 8px;border-bottom:1px solid var(--line);text-decoration:none;color:inherit;position:relative;transition:background .3s,padding-left .3s var(--ease)}
+  .lrow:hover{background:var(--paper-2);padding-left:16px}
+  .lrow::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);transform:scaleY(0);transform-origin:top;transition:transform .3s var(--ease)}
+  .lrow:hover::after{transform:scaleY(1)}
+  .lrow.hide{display:none}
+  .lrank{font-family:var(--serif);font-size:34px;font-weight:300;color:var(--muted);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .lrank.t1{color:var(--gold)}.lrank.t2,.lrank.t3{color:var(--accent)}
+  .lname h3{font-size:20px;font-weight:400;letter-spacing:-.01em;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .lname .owner{color:var(--muted);font-size:14px}
+  .lname .cat{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--sea);border:1px solid var(--line);padding:2px 7px;border-radius:20px;text-transform:uppercase}
+  .lname p{color:var(--ink-soft);font-size:13.5px;font-weight:300;margin-top:4px;font-family:var(--serif)}
+  .lname .rel{font-family:var(--mono);font-size:10.5px;color:var(--sea);margin-top:5px}
+  .vel{display:flex;flex-direction:column;gap:6px}
+  .vel .bar{height:7px;background:var(--paper-3);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+  .vel .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--sea),var(--accent))}
+  .vel .v{font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;justify-content:space-between}
+  .vel .v b{color:var(--ink);font-weight:600;font-size:13px}
+  .spark{width:100%;height:34px;display:block}.spark .ph{font-family:var(--mono);font-size:9px;color:var(--muted)}
+  .lstars{text-align:right;font-variant-numeric:tabular-nums}
+  .lstars b{font-family:var(--serif);font-size:18px;font-weight:400;display:block}
+  .lstars .t{font-family:var(--mono);font-size:11px}.lstars .up{color:var(--sea)}.lstars .flat{color:var(--muted)}.lstars .dn{color:var(--accent)}
+  .bhead{display:grid;grid-template-columns:54px 1.6fr 150px 130px 96px;gap:20px;padding:0 8px 12px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .bhead .r{text-align:right}
+  @media(max-width:840px){
+    .lrow,.bhead{grid-template-columns:40px 1fr 92px;gap:14px}
+    .lrow .vel,.bhead .c-v,.spark,.bhead .c-s{display:none}
+  }
+  .loading{padding:60px 0;text-align:center;color:var(--muted);font-family:var(--mono);font-size:13px;letter-spacing:.08em}
+
+  footer{border-top:1px solid var(--ink);margin-top:74px;padding:60px 0 42px;background:var(--ink);color:var(--paper)}
+  footer h2{font-size:clamp(24px,4vw,40px);font-weight:300;letter-spacing:-.025em;margin-bottom:18px;max-width:22ch}
+  footer h2 em{color:var(--accent)}
+  footer p{color:#c9c1b3;font-weight:300;max-width:64ch;margin-bottom:16px;line-height:1.6}
+  footer a.inl{color:var(--sea-soft);text-decoration:none}
+  .foot-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px;color:#b9b1a3;font-family:var(--mono);font-size:12px;margin-top:32px}
+  .foot-row a{color:var(--paper);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .25s}
+  .foot-row a:hover{border-color:var(--accent)}
+</style>
+</head>
+<body>
+<nav id="nav"><div class="wrap nav-in">
+  <a class="brand" href="/"><span class="mark"></span><b>Agent Velocity</b><span class="by">· a Kymata Labs product</span></a>
+  <div class="nav-links">
+    <a href="#board">The board</a>
+    <a href="#how" class="hidem">How it's made</a>
+    <a href="https://kymatalabs-techtalevisions-projects.vercel.app/" class="hidem">Kymata Labs ↗</a>
+  </div>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow mono"><span class="dot"></span><span id="liveline">The coding-agent race · recomputed daily</span></div>
+  <h1>Who's <em>shipping fastest</em> in the coding-agent race?</h1>
+  <p class="lede">A live leaderboard of open-source coding agents — ranked by real GitHub shipping velocity: commit cadence, release recency, and 4-week trend. Not by stars. By who's actually moving.</p>
+  <div class="meta-row" id="metarow"></div>
+  <div class="podium" id="podium"></div>
+</div></header>
+
+<section id="board"><div class="wrap">
+  <div class="controls">
+    <div class="filters" id="filters"></div>
+    <div class="sortnote">Ranked by velocity ↓</div>
+  </div>
+  <div class="bhead"><span>#</span><span>Agent</span><span class="c-v">Velocity</span><span class="c-s">Commits (6mo)</span><span class="r">Stars</span></div>
+  <div class="board" id="lboard"><div class="loading">Loading the leaderboard…</div></div>
+</div></section>
+
+<footer id="how"><div class="wrap">
+  <span class="mono" style="color:var(--sea-soft)">How it's made</span>
+  <h2>The race, scored by <em>shipping</em> — not hype.</h2>
+  <p>Stars measure yesterday's popularity. Agent Velocity measures who's moving now: an AI agent pulls live GitHub signals for every coding agent daily, scores velocity as commit cadence (55%) + release recency (25%) + 4-week trend (20%), and redeploys this board. Built and run by the same agent stack as <a class="inl" href="https://kymatalabs-techtalevisions-projects.vercel.app/" target="_blank" rel="noopener">Kymata Labs</a> — and yes, that includes the very agents on this list.</p>
+  <p style="font-size:14px;color:#a89f90"><em>One honest caveat: velocity reflects <strong style="color:#c9c1b3;font-weight:500">public-repo</strong> commit activity. An agent developed privately, or whose open-source repo is mostly releases and issues, will rank below its true shipping pace. This board measures what's visible on GitHub.</em></p>
+  <div class="foot-row">
+    <span id="footgen">Recomputed daily</span>
+    <span>© 2026 Kymata Labs · Agent Velocity</span>
+    <a href="https://kymatalabs-techtalevisions-projects.vercel.app/">kymatalabs ↗</a>
+  </div>
+</div></footer>
+
+<script src="app.js"></script>
+</body>
+</html>

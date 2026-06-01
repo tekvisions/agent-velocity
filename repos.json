@@ -1,0 +1,20 @@
+{
+  "_comment": "Open-source coding agents. Velocity (the 'momentum' field) is computed from real GitHub signals by build_data.py — commit cadence + release recency + 4-week trend. Category = interface type.",
+  "categories": ["CLI", "IDE / Editor", "Autonomous", "Framework"],
+  "repos": [
+    { "repo": "anthropics/claude-code",   "category": "CLI",         "blurb": "Anthropic's agentic coding tool that lives in your terminal." },
+    { "repo": "openai/codex",             "category": "CLI",         "blurb": "OpenAI's open-source coding agent for the terminal." },
+    { "repo": "google-gemini/gemini-cli", "category": "CLI",         "blurb": "Google's open-source AI agent that brings Gemini to your terminal." },
+    { "repo": "sst/opencode",             "category": "CLI",         "blurb": "The open-source, provider-agnostic AI coding agent for the terminal." },
+    { "repo": "QwenLM/qwen-code",         "category": "CLI",         "blurb": "Alibaba's Qwen-powered command-line coding agent." },
+    { "repo": "charmbracelet/crush",      "category": "CLI",         "blurb": "Charm's glamorous terminal-based AI coding agent." },
+    { "repo": "block/goose",              "category": "CLI",         "blurb": "Block's open, extensible AI agent that codes and runs tasks." },
+    { "repo": "Aider-AI/aider",           "category": "CLI",         "blurb": "AI pair programming in your terminal — edits across your repo." },
+    { "repo": "cline/cline",              "category": "IDE / Editor","blurb": "Autonomous coding agent right in your IDE (VS Code)." },
+    { "repo": "Kilo-Org/kilocode",        "category": "IDE / Editor","blurb": "Open-source AI coding agent for VS Code (Cline/Roo lineage)." },
+    { "repo": "continuedev/continue",     "category": "IDE / Editor","blurb": "Build, share & run custom AI code agents inside your IDE." },
+    { "repo": "yetone/avante.nvim",       "category": "IDE / Editor","blurb": "Cursor-style AI coding, natively in Neovim." },
+    { "repo": "OpenHands/OpenHands",      "category": "Autonomous",  "blurb": "A platform for autonomous software-engineering agents." },
+    { "repo": "SWE-agent/SWE-agent",      "category": "Autonomous",  "blurb": "Princeton's agent that fixes real GitHub issues autonomously." }
+  ]
+}

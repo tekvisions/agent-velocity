@@ -1,0 +1,34 @@
+name: Update Agent Velocity
+on:
+  schedule:
+    - cron: "47 9 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+# Commit uses default GITHUB_TOKEN (no workflow retrigger). Do not add a push: trigger.
+concurrency:
+  group: update
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_PROJECT: agent-velocity
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Recompute from GitHub signals
+        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: python build_data.py
+      - name: Commit data if changed
+        run: |
+          git config user.name "agent-velocity-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if ! git diff --quiet -- data.json; then
+            git add data.json && git commit -m "data: daily velocity refresh ($(date -u +%Y-%m-%d))" && git push
+          else echo "No data change."; fi
+      - name: Deploy to Vercel
+        if: ${{ env.VERCEL_TOKEN != '' }}
+        run: python deploy.py
