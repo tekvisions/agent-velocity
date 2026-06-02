@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agent Velocity — the open-source coding-agent race</title>
-<meta name="description" content="A live leaderboard ranking open-source coding agents by shipping velocity — commit cadence, release recency, and 4-week trend. Who's winning the race to build the best coding agent? Updated daily by an AI agent.">
+<meta name="description" content="A live leaderboard ranking open-source coding agents by shipping velocity — commit cadence, release recency, and 6-month trend. Who's winning the race to build the best coding agent? Updated daily by an AI agent.">
 <meta property="og:title" content="Agent Velocity — the coding-agent race, live">
 <meta property="og:description" content="Who's shipping fastest? Open-source coding agents ranked by real GitHub velocity, updated daily by an agent.">
 <meta property="og:type" content="website">
@@ -20,120 +20,34 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@300;400;600;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="canonical" href="https://agentvelocity.kymatalabs.com/">
 <link rel="icon" href="favicon.svg">
-<style>
-  :root{
-    --bg:#0a0910; --bg-2:#100d18; --panel:#15111f; --panel-2:#1b1626;
-    --ink:#f6eef1; --ink-soft:#b6abbc; --muted:#7c7189; --line:#241f30; --line-2:#2c2638;
-    --hot:#ff4324; --hot-2:#ff8a2b; --ember:#ffb648;
-    --gold:#ffd24a; --silver:#cfd6e2; --bronze:#e58a46;
-    --disp:"Anton",sans-serif; --mono:"DM Mono",ui-monospace,monospace; --sans:"Sora",system-ui,sans-serif;
-    --ease:cubic-bezier(.2,.7,.2,1);
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:hidden;position:relative}
-  ::selection{background:var(--hot);color:#fff}
-  a{color:inherit}
-
-  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
-    background:radial-gradient(ellipse 90% 60% at 80% -5%,rgba(255,67,36,.14),transparent 60%),
-               radial-gradient(ellipse 70% 50% at 0% 0%,rgba(255,138,43,.08),transparent 55%)}
-  #streaks{position:fixed;top:0;left:0;width:100%;height:66vh;z-index:0;pointer-events:none;
-    mask-image:linear-gradient(180deg,#000 58%,transparent 100%)}
-
-  .wrap{max-width:1140px;margin:0 auto;padding:0 36px;position:relative;z-index:2}
-  .mono{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
-
-  nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(8px);
-    background:linear-gradient(180deg,rgba(10,9,16,.92),rgba(10,9,16,.4));border-bottom:1px solid transparent;transition:border-color .4s}
-  nav.scrolled{border-color:var(--line);background:rgba(10,9,16,.96)}
-  .nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
-  .brand{display:flex;align-items:center;gap:11px;font-family:var(--disp);font-size:21px;letter-spacing:.01em;text-decoration:none;color:var(--ink);text-transform:uppercase;font-style:italic;transform:skewX(-6deg)}
-  .brand .by{color:var(--muted);font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;transform:skewX(6deg);font-style:normal}
-  .nav-links{display:flex;gap:24px;align-items:center}
-  .nav-links a{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;text-decoration:none;color:var(--ink-soft);transition:color .25s}
-  .nav-links a:hover{color:var(--hot)}
-  @media(max-width:720px){.nav-links a.hidem{display:none}}
-
-  header.hero{padding:126px 0 28px}
-  .eyebrow{display:inline-flex;align-items:center;gap:11px;color:var(--hot-2);margin-bottom:22px;flex-wrap:wrap;
-    font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
-    border:1px solid var(--line-2);background:var(--panel);padding:7px 13px;border-radius:2px}
-  .eyebrow .dot{width:7px;height:7px;background:var(--hot);border-radius:50%;box-shadow:0 0 10px var(--hot);animation:rev 1.2s infinite}
-  @keyframes rev{0%,100%{opacity:1}50%{opacity:.3}}
-  h1{font-family:var(--disp);font-size:clamp(46px,8vw,108px);font-weight:400;line-height:.9;letter-spacing:.01em;max-width:14ch;
-    text-transform:uppercase;font-style:italic;transform:skewX(-5deg);transform-origin:left}
-  h1 em{font-style:italic;color:var(--hot);text-shadow:0 0 36px rgba(255,67,36,.5)}
-  .lede{margin-top:26px;font-size:clamp(16px,1.85vw,20px);max-width:56ch;color:var(--ink-soft);font-weight:300}
-  .meta-row{display:flex;gap:0;margin-top:32px;flex-wrap:wrap;border:1px solid var(--line);background:rgba(21,17,31,.7);border-radius:3px;overflow:hidden}
-  .meta-row .m{padding:15px 24px 13px;border-right:1px solid var(--line);flex:1 1 auto;min-width:124px}
-  .meta-row .m:last-child{border-right:none}
-  .meta-row .m b{display:block;font-family:var(--disp);font-size:32px;font-weight:400;letter-spacing:.01em;line-height:1;font-variant-numeric:tabular-nums;font-style:italic;transform:skewX(-5deg)}
-  .meta-row .m span{color:var(--muted);font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;display:block;margin-top:9px}
-
-  section{position:relative;z-index:2}
-  /* podium */
-  .podium{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;border-top:1px solid var(--line);margin-top:38px;padding-top:34px}
-  .pod{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--bg-2));padding:22px;position:relative;overflow:hidden;text-decoration:none;color:inherit;transition:transform .35s var(--ease),border-color .35s;border-radius:3px}
-  .pod::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease)}
-  .pod.p1::before{background:var(--gold)}.pod.p2::before{background:var(--silver)}.pod.p3::before{background:var(--bronze)}
-  .pod.p1{border-color:color-mix(in srgb,var(--gold) 35%,var(--line))}
-  .pod:hover{transform:translateY(-4px);border-color:var(--hot)}.pod:hover::before{transform:scaleX(1)}
-  .pod .pr{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--muted);display:flex;align-items:center;gap:8px;text-transform:uppercase}
-  .pod .medal{font-size:20px}
-  .pod h3{font-family:var(--disp);font-size:clamp(22px,2.6vw,32px);font-weight:400;letter-spacing:.01em;margin:12px 0 6px;text-transform:uppercase;font-style:italic;transform:skewX(-5deg)}
-  .pod .vel{font-family:var(--mono);font-size:12px;color:var(--hot-2);font-weight:500}
-  .pod p{color:var(--ink-soft);font-size:13px;font-weight:300;margin-top:8px}
-  @media(max-width:760px){.podium{grid-template-columns:1fr}}
-
-  .controls{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:46px;padding-top:30px}
-  .filters{display:flex;gap:7px;flex-wrap:wrap}
-  .chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);border:1px solid var(--line);background:var(--panel);border-radius:2px;padding:8px 14px;cursor:pointer;transition:.22s}
-  .chip:hover{border-color:var(--hot);color:var(--hot)}.chip.active{background:var(--hot);color:#fff;border-color:var(--hot)}
-  .sortnote{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
-
-  .board{margin-top:16px;border-top:1px solid var(--line)}
-  .bhead{display:grid;grid-template-columns:54px 1.6fr 150px 130px 96px;gap:20px;padding:14px 8px 12px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line)}
-  .bhead .r{text-align:right}
-  .lrow{display:grid;grid-template-columns:54px 1.6fr 150px 130px 96px;gap:20px;align-items:center;padding:18px 8px;border-bottom:1px solid var(--line);text-decoration:none;color:inherit;position:relative;transition:background .3s,padding-left .3s var(--ease)}
-  .lrow:hover{background:linear-gradient(90deg,rgba(255,67,36,.06),transparent);padding-left:18px}
-  .lrow::after{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--hot);box-shadow:0 0 12px var(--hot);transform:scaleY(0);transform-origin:top;transition:transform .3s var(--ease)}
-  .lrow:hover::after{transform:scaleY(1)}
-  .lrow.hide{display:none}
-  .lrank{font-family:var(--disp);font-size:36px;font-weight:400;color:var(--muted);letter-spacing:0;font-variant-numeric:tabular-nums;font-style:italic;transform:skewX(-6deg)}
-  .lrank.t1{color:var(--gold)}.lrank.t2{color:var(--silver)}.lrank.t3{color:var(--bronze)}
-  .lname h3{font-family:var(--disp);font-size:22px;font-weight:400;letter-spacing:.01em;display:flex;align-items:center;gap:10px;flex-wrap:wrap;text-transform:uppercase;font-style:italic;transform:skewX(-4deg)}
-  .lname .owner{color:var(--muted);font-size:13px;font-family:var(--sans);transform:skewX(4deg);text-transform:none;font-style:normal}
-  .lname .cat{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;color:var(--hot-2);border:1px solid color-mix(in srgb,var(--hot-2) 35%,transparent);padding:2px 7px;border-radius:2px;text-transform:uppercase;transform:skewX(4deg);font-style:normal}
-  .lname p{color:var(--ink-soft);font-size:13px;font-weight:300;margin-top:4px}
-  .lname .rel{font-family:var(--mono);font-size:10px;color:var(--hot-2);margin-top:5px}
-  .vel{display:flex;flex-direction:column;gap:6px}
-  .vel .bar{height:8px;background:rgba(21,17,31,.9);border:1px solid var(--line);border-radius:2px;overflow:hidden;position:relative}
-  .vel .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ember),var(--hot));box-shadow:0 0 10px rgba(255,67,36,.5)}
-  .vel .v{font-family:var(--mono);font-size:10.5px;color:var(--muted);display:flex;justify-content:space-between}
-  .vel .v b{color:var(--ink);font-weight:500;font-size:12px}
-  .spark{width:100%;height:34px;display:block}.spark .ph{font-family:var(--mono);font-size:9px;color:var(--muted)}
-  .lstars{text-align:right;font-variant-numeric:tabular-nums}
-  .lstars b{font-family:var(--disp);font-size:20px;font-weight:400;display:block;font-style:italic;transform:skewX(-5deg)}
-  .lstars .t{font-family:var(--mono);font-size:10.5px}.lstars .up{color:var(--hot-2)}.lstars .flat{color:var(--muted)}.lstars .dn{color:#9b8fa6}
-  @media(max-width:840px){
-    .lrow,.bhead{grid-template-columns:40px 1fr 92px;gap:14px}
-    .lrow .vel,.bhead .c-v,.spark,.bhead .c-s{display:none}
-  }
-  .loading{padding:60px 0;text-align:center;color:var(--muted);font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
-
-  footer{border-top:1px solid var(--hot);margin-top:74px;padding:60px 0 44px;background:linear-gradient(180deg,var(--bg-2),#060509)}
-  footer h2{font-family:var(--disp);font-size:clamp(26px,4.4vw,48px);font-weight:400;letter-spacing:.01em;margin-bottom:18px;max-width:20ch;text-transform:uppercase;font-style:italic;transform:skewX(-4deg)}
-  footer h2 em{font-style:italic;color:var(--hot)}
-  footer p{color:var(--ink-soft);font-weight:300;max-width:64ch;margin-bottom:16px;line-height:1.65}
-  footer a.inl{color:var(--hot-2);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .25s}
-  footer a.inl:hover{border-color:var(--hot-2)}
-  .foot-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px;color:var(--muted);font-family:var(--mono);font-size:11px;margin-top:32px}
-  .foot-row a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .25s}
-  .foot-row a:hover{border-color:var(--hot)}
-
-  @media(prefers-reduced-motion:reduce){#streaks{display:none}.eyebrow .dot{animation:none}}
-</style>
+<link rel="stylesheet" href="style.css">
+<script>
+/* no-flash theme: localStorage('theme') → else prefers-color-scheme → else dark */
+(function(){try{var t=localStorage.getItem("theme");if(!t){t=(window.matchMedia&&window.matchMedia("(prefers-color-scheme:light)").matches)?"light":"dark";}document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme="dark";}})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://agentvelocity.kymatalabs.com/#website",
+      "url": "https://agentvelocity.kymatalabs.com/",
+      "name": "Agent Velocity",
+      "description": "A live leaderboard ranking open-source coding agents by shipping velocity — commit cadence, release recency, and 6-month trend.",
+      "inLanguage": "en",
+      "publisher": { "@id": "https://kymatalabs.com/#org" }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://kymatalabs.com/#org",
+      "name": "Kymata Labs",
+      "url": "https://kymatalabs.com/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json" id="itemlist-ld"></script>
 </head>
 <body>
 <canvas id="streaks" aria-hidden="true"></canvas>
@@ -144,6 +58,10 @@
     <a href="#board">The board</a>
     <a href="#how" class="hidem">How it's made</a>
     <a href="https://kymatalabs.com/" class="hidem">Kymata Labs ↗</a>
+    <button class="themetog" id="themetog" type="button" aria-label="Toggle light/dark theme" title="Toggle theme">
+      <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2 12h2.5M19.5 12H22M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+    </button>
   </div>
 </div></nav>
 
@@ -158,9 +76,15 @@
 <section id="board"><div class="wrap">
   <div class="controls">
     <div class="filters" id="filters"></div>
-    <div class="sortnote">Ranked by velocity ↓</div>
+    <div class="sortnote" id="sortnote">Ranked by velocity ↓</div>
   </div>
-  <div class="bhead"><span>#</span><span>Agent</span><span class="c-v">Velocity</span><span class="c-s">Commits · 6mo</span><span class="r">Stars</span></div>
+  <div class="bhead" role="row">
+    <span>#</span>
+    <span>Agent</span>
+    <span class="c-v sortable" role="columnheader" tabindex="0" data-sort="momentum" aria-sort="descending">Velocity <span class="arrow">▼</span></span>
+    <span class="c-s sortable" role="columnheader" tabindex="0" data-sort="recent4w_commits" aria-sort="none">Commits · 6mo <span class="arrow">▼</span></span>
+    <span class="r sortable" role="columnheader" tabindex="0" data-sort="stars" aria-sort="none">Stars <span class="arrow">▼</span></span>
+  </div>
   <div class="board" id="lboard"><div class="loading">Warming up the grid…</div></div>
 </div></section>
 
@@ -177,34 +101,53 @@
 </div></footer>
 
 <script>
-/* speed-streaks hero — horizontal light trails ripping left→right */
+/* speed-streaks hero — horizontal light trails ripping left→right. Theme-aware. */
 (function(){
   if(window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches) return;
   var cv=document.getElementById("streaks"); if(!cv) return;
   var ctx=cv.getContext("2d"), W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,2), ps=[], raf;
+  /* streak palette + alpha multiplier per theme; re-read on toggle */
+  var THEME={
+    dark:{colors:["255,67,36","255,138,43","255,182,72"],comp:"lighter",aMul:1.0},
+    light:{colors:["232,53,26","217,101,26","204,120,30"],comp:"source-over",aMul:0.55}
+  };
+  function curTheme(){return document.documentElement.dataset.theme==="light"?THEME.light:THEME.dark;}
+  var TH=curTheme();
   function size(){ W=cv.clientWidth; H=cv.clientHeight; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); build(); }
-  var COLORS=["255,67,36","255,138,43","255,182,72"];
   function mk(){ var sp=2.5+Math.random()*7; return {
     x:-Math.random()*W, y:Math.random()*H, len:60+Math.random()*180, sp:sp,
-    w:Math.random()<0.2?1.8:0.8, c:COLORS[(Math.random()*COLORS.length)|0], a:0.10+Math.random()*0.35 }; }
+    w:Math.random()<0.2?1.8:0.8, c:TH.colors[(Math.random()*TH.colors.length)|0], a:0.10+Math.random()*0.35 }; }
   function build(){ var n=Math.max(18,Math.min(46,Math.round(W/26))); ps=[]; for(var i=0;i<n;i++){var p=mk();p.x=Math.random()*W;ps.push(p);} }
   function frame(){
     ctx.clearRect(0,0,W,H);
-    ctx.globalCompositeOperation="lighter";
+    ctx.globalCompositeOperation=TH.comp;
     for(var i=0;i<ps.length;i++){
       var p=ps[i]; p.x+=p.sp;
+      var a=(p.a*TH.aMul);
       var g=ctx.createLinearGradient(p.x-p.len,p.y,p.x,p.y);
-      g.addColorStop(0,"rgba("+p.c+",0)"); g.addColorStop(1,"rgba("+p.c+","+p.a.toFixed(3)+")");
+      g.addColorStop(0,"rgba("+p.c+",0)"); g.addColorStop(1,"rgba("+p.c+","+a.toFixed(3)+")");
       ctx.strokeStyle=g; ctx.lineWidth=p.w; ctx.beginPath(); ctx.moveTo(p.x-p.len,p.y); ctx.lineTo(p.x,p.y); ctx.stroke();
-      // leading spark
-      ctx.fillStyle="rgba("+p.c+","+Math.min(1,p.a+0.3).toFixed(3)+")"; ctx.fillRect(p.x-1,p.y-p.w/2,2,p.w);
+      ctx.fillStyle="rgba("+p.c+","+Math.min(1,a+0.3).toFixed(3)+")"; ctx.fillRect(p.x-1,p.y-p.w/2,2,p.w);
       if(p.x-p.len>W){ ps[i]=mk(); }
     }
     raf=requestAnimationFrame(frame);
   }
+  /* re-read theme + rebuild streaks when toggled */
+  window.addEventListener("av:themechange",function(){ TH=curTheme(); build(); });
   size(); window.addEventListener("resize", size);
   document.addEventListener("visibilitychange", function(){ if(document.hidden){cancelAnimationFrame(raf);} else {raf=requestAnimationFrame(frame);} });
   raf=requestAnimationFrame(frame);
+})();
+/* theme toggle — persists + notifies the canvas */
+(function(){
+  var btn=document.getElementById("themetog"); if(!btn) return;
+  btn.addEventListener("click",function(){
+    var next=document.documentElement.dataset.theme==="light"?"dark":"light";
+    document.documentElement.dataset.theme=next;
+    try{localStorage.setItem("theme",next);}catch(e){}
+    var tc=document.querySelector('meta[name="theme-color"]'); if(tc)tc.setAttribute("content",next==="light"?"#f6f3ef":"#0a0910");
+    window.dispatchEvent(new Event("av:themechange"));
+  });
 })();
 </script>
 <script src="app.js"></script>

@@ -11,11 +11,13 @@ Auth: reads GITHUB_TOKEN from env (GitHub Actions provides it). Falls back to
 The `stars_history` is appended to on every run (the prior data.json is read
 back in), so the star sparkline builds a real day-over-day series over time.
 """
-import json, os, subprocess, sys, time, urllib.request, urllib.error
+from __future__ import annotations
+import json, os, re, subprocess, sys, time, urllib.request, urllib.error
 from datetime import datetime, timezone, timedelta
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 API = "https://api.github.com"
+SITE = "https://agentvelocity.kymatalabs.com"
 
 
 def token() -> str:
@@ -114,6 +116,376 @@ def momentum(recent4: int, prior4: int, days_release: float | None) -> int:
         tr = 0.7 if recent4 > 0 else 0.5
     score = round(100 * (0.55 * act + 0.25 * rel + 0.20 * tr))
     return max(0, min(100, score))
+
+
+# ─────────────────────────  STATIC DETAIL PAGES  ─────────────────────────
+def slugify(s: str) -> str:
+    """lowercase url-safe slug; MUST match app.js slugify()."""
+    return re.sub(r"^-+|-+$", "", re.sub(r"[^a-z0-9]+", "-", str(s or "").lower()))
+
+
+def repo_slug(r: dict) -> str:
+    return slugify(f"{r.get('owner','')}-{r.get('name','')}")
+
+
+def _esc(s) -> str:
+    s = "" if s is None else str(s)
+    return (s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+             .replace('"', "&quot;").replace("'", "&#39;"))
+
+
+def _fmt_stars(n: int) -> str:
+    n = int(n or 0)
+    if n >= 10000:
+        return f"{n/1000:.0f}k"
+    if n >= 1000:
+        return f"{n/1000:.1f}".rstrip("0").rstrip(".") + "k"
+    return str(n)
+
+
+def _rel_date(iso: str | None) -> str:
+    d = days_since(iso)
+    if d is None:
+        return "—"
+    if d < 1:
+        return "today"
+    if d < 2:
+        return "1d ago"
+    if d < 30:
+        return f"{round(d)}d ago"
+    if d < 365:
+        return f"{round(d/30)}mo ago"
+    return f"{round(d/365)}y ago"
+
+
+def _spark_svg(arr, w=720, h=160) -> str:
+    """Larger monthly-commits sparkline for the detail page."""
+    arr = [int(x or 0) for x in (arr or [])]
+    if len(arr) < 2:
+        return '<svg viewBox="0 0 %d %d" preserveAspectRatio="none" aria-hidden="true"></svg>' % (w, h)
+    mx, mn = max(arr), min(arr)
+    rg = (mx - mn) or 1
+    n = len(arr)
+    pad = 6
+    def pt(i, v):
+        x = pad + i * (w - 2 * pad) / (n - 1)
+        y = h - pad - (v - mn) / rg * (h - 2 * pad)
+        return f"{x:.1f},{y:.1f}"
+    line = " ".join(pt(i, v) for i, v in enumerate(arr))
+    area = f"{pad:.1f},{h-pad:.1f} " + line + f" {w-pad:.1f},{h-pad:.1f}"
+    lx, ly = (w - pad), (h - pad - (arr[-1] - mn) / rg * (h - 2 * pad))
+    return (
+        f'<svg viewBox="0 0 {w} {h}" preserveAspectRatio="none" role="img" aria-label="Monthly commit trend, last 6 months">'
+        f'<defs><linearGradient id="avfill" x1="0" y1="0" x2="0" y2="1">'
+        f'<stop offset="0" stop-color="#ff4324" stop-opacity="0.28"/>'
+        f'<stop offset="1" stop-color="#ff4324" stop-opacity="0"/></linearGradient></defs>'
+        f'<polygon points="{area}" fill="url(#avfill)"/>'
+        f'<polyline points="{line}" fill="none" stroke="#ff8a2b" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>'
+        f'<circle cx="{lx:.1f}" cy="{ly:.1f}" r="4" fill="#ff4324"/></svg>'
+    )
+
+
+def _nav_html() -> str:
+    return (
+        '<nav id="nav"><div class="wrap nav-in">'
+        '<a class="brand" href="/">Agent Velocity <span class="by">// Kymata Labs</span></a>'
+        '<div class="nav-links">'
+        '<a href="/#board">The board</a>'
+        '<a href="/#how" class="hidem">How it\'s made</a>'
+        '<a href="https://kymatalabs.com/" class="hidem">Kymata Labs ↗</a>'
+        '<button class="themetog" id="themetog" type="button" aria-label="Toggle light/dark theme" title="Toggle theme">'
+        '<svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>'
+        '<svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2 12h2.5M19.5 12H22M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>'
+        '</button></div></div></nav>'
+    )
+
+
+def _footer_html() -> str:
+    return (
+        '<footer><div class="wrap">'
+        '<span class="mono" style="color:var(--hot-2)">How it\'s made</span>'
+        '<h2>The race, scored by <em>shipping</em> — not hype.</h2>'
+        '<p>An AI agent pulls live GitHub signals for every coding agent daily, scores velocity as commit cadence (55%) + release recency (25%) + 6-month trend (20%), and redeploys this board. Built and run by the same agent stack as '
+        '<a class="inl" href="https://kymatalabs.com/" target="_blank" rel="noopener">Kymata Labs</a>.</p>'
+        '<div class="foot-row">'
+        '<a href="/">← All agents</a>'
+        '<span>© 2026 Kymata Labs · Agent Velocity</span>'
+        '<a href="https://kymatalabs.com/">kymatalabs ↗</a>'
+        '</div></div></footer>'
+    )
+
+
+# inline no-flash theme script + theme-toggle wiring, shared by every detail page
+_THEME_HEAD = (
+    '<script>(function(){try{var t=localStorage.getItem("theme");if(!t){t=(window.matchMedia&&'
+    'window.matchMedia("(prefers-color-scheme:light)").matches)?"light":"dark";}'
+    'document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme="dark";}})();</script>'
+)
+_THEME_TOGGLE_JS = (
+    '<script>(function(){var b=document.getElementById("themetog");if(!b)return;'
+    'b.addEventListener("click",function(){var n=document.documentElement.dataset.theme==="light"?"dark":"light";'
+    'document.documentElement.dataset.theme=n;try{localStorage.setItem("theme",n);}catch(e){}'
+    'var tc=document.querySelector(\'meta[name="theme-color"]\');if(tc)tc.setAttribute("content",n==="light"?"#f6f3ef":"#0a0910");});})();</script>'
+)
+
+
+def _detail_html(r: dict, generated_at: str | None) -> str:
+    slug = repo_slug(r)
+    url = f"{SITE}/a/{slug}/"
+    name = r.get("name", "")
+    owner = r.get("owner", "")
+    full = f"{owner}/{name}"
+    cat = r.get("category", "")
+    blurb = r.get("blurb", "")
+    rank = r.get("rank", "—")
+    rclass = f"t{rank}" if isinstance(rank, int) and rank <= 3 else ""
+    lang = r.get("language") or "—"
+    stars = int(r.get("stars", 0) or 0)
+    forks = int(r.get("forks", 0) or 0)
+    issues = int(r.get("open_issues", 0) or 0)
+    mom = int(r.get("momentum", 0) or 0)
+    r4 = int(r.get("recent4w_commits", 0) or 0)
+    delta = int(r.get("commit_delta", 0) or 0)
+    rel_tag = r.get("last_release") or "—"
+    rel_when = _rel_date(r.get("last_release_at"))
+    gh_url = r.get("html_url") or f"https://github.com/{owner}/{name}"
+    home = (r.get("homepage") or "").strip()
+    title = f"{name} — velocity {mom} · #{rank} | Agent Velocity"
+    desc = (f"{full}: shipping velocity {mom}/100, ranked #{rank} among open-source coding agents. "
+            f"{r4} commits in the last 4 weeks, {_fmt_stars(stars)} stars. {blurb}").strip()
+    desc = re.sub(r"\s+", " ", desc)[:300]
+
+    delta_sub = ""
+    if delta > 3:
+        delta_sub = f'<div class="sub">▲ {delta} more than prior 4w</div>'
+    elif delta < -3:
+        delta_sub = f'<div class="sub" style="color:var(--muted)">▼ {abs(delta)} fewer than prior 4w</div>'
+    else:
+        delta_sub = '<div class="sub" style="color:var(--muted)">→ steady vs prior 4w</div>'
+
+    monthly = r.get("monthly_commits") or []
+    axis = '<div class="axis"><span>6 months ago</span><span>now</span></div>' if len(monthly) >= 2 else ""
+
+    out_links = f'<a class="btn primary" href="{_esc(gh_url)}" target="_blank" rel="noopener">View on GitHub ↗</a>'
+    if home:
+        out_links += f'<a class="btn" href="{_esc(home)}" target="_blank" rel="noopener">Homepage ↗</a>'
+
+    ld = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {"@type": "ListItem", "position": 1, "name": "Home", "item": f"{SITE}/"},
+                    {"@type": "ListItem", "position": 2, "name": "Agent Velocity", "item": f"{SITE}/#board"},
+                    {"@type": "ListItem", "position": 3, "name": name, "item": url},
+                ],
+            },
+            {
+                "@type": "SoftwareSourceCode",
+                "@id": f"{url}#software",
+                "name": name,
+                "description": blurb,
+                "url": url,
+                "codeRepository": gh_url,
+                "programmingLanguage": (lang if lang != "—" else None),
+                "author": {"@type": "Organization", "name": owner},
+                "sameAs": [u for u in [gh_url, home or None] if u],
+            },
+        ],
+    }
+    # drop null programmingLanguage cleanly
+    ssc = ld["@graph"][1]
+    if ssc.get("programmingLanguage") is None:
+        ssc.pop("programmingLanguage", None)
+    ld_json = json.dumps(ld, ensure_ascii=False)
+
+    recomputed = _rel_date(generated_at)
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{_esc(title)}</title>
+<meta name="description" content="{_esc(desc)}">
+<meta property="og:title" content="{_esc(name)} — velocity {mom} · #{rank} in the coding-agent race">
+<meta property="og:description" content="{_esc(desc)}">
+<meta property="og:type" content="article">
+<meta property="og:image" content="{SITE}/og.png">
+<meta property="og:url" content="{url}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{_esc(name)} — velocity {mom} · #{rank} in the coding-agent race">
+<meta name="twitter:description" content="{_esc(desc)}">
+<meta name="twitter:image" content="{SITE}/og.png">
+<meta name="theme-color" content="#0a0910">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@300;400;600;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="canonical" href="{url}">
+<link rel="icon" href="/favicon.svg">
+<link rel="stylesheet" href="/style.css">
+{_THEME_HEAD}
+<script type="application/ld+json">{ld_json}</script>
+</head>
+<body>
+<canvas id="streaks" aria-hidden="true"></canvas>
+{_nav_html()}
+<main class="detail"><div class="wrap">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="/">Home</a><span class="sep">/</span>
+    <a href="/#board">Agent Velocity</a><span class="sep">/</span>
+    <span aria-current="page">{_esc(name)}</span>
+  </nav>
+
+  <div class="d-rankline">
+    <div class="d-rank {rclass}"><span class="hash">#</span>{rank}</div>
+    <div class="d-titlewrap">
+      <h1>{_esc(name)}</h1>
+      <div class="d-owner">{_esc(owner)} · <span class="d-cat">{_esc(cat)}</span></div>
+    </div>
+  </div>
+  <p class="d-blurb">{_esc(blurb)}</p>
+  <div class="d-actions">{out_links}</div>
+
+  <div class="d-grid">
+    <div class="d-stat"><b>{mom}</b><span>Velocity / 100</span></div>
+    <div class="d-stat"><b>{r4}</b><span>Commits · last 4w</span>{delta_sub}</div>
+    <div class="d-stat"><b>{_fmt_stars(stars)}</b><span>Stars</span></div>
+    <div class="d-stat"><b>{_fmt_stars(forks)}</b><span>Forks</span></div>
+    <div class="d-stat"><b>{_fmt_stars(issues)}</b><span>Open issues</span></div>
+    <div class="d-stat"><b>{_esc(lang)}</b><span>Language</span></div>
+  </div>
+
+  <section class="d-section">
+    <h2>Shipping momentum</h2>
+    <p class="sublabel">Monthly commits · last 6 months (real GitHub commit history)</p>
+    <div class="d-spark">{_spark_svg(monthly)}{axis}</div>
+    <div class="d-velbar">
+      <div class="bar"><i style="width:{mom}%"></i></div>
+      <div class="lbl"><span>velocity score</span><b>{mom} / 100</b></div>
+    </div>
+  </section>
+
+  <section class="d-section">
+    <h2>Latest release</h2>
+    <p class="sublabel">Newest stable tag on GitHub</p>
+    <div class="d-grid" style="margin-top:22px">
+      <div class="d-stat"><b style="font-size:24px">{_esc(rel_tag)}</b><span>Tag</span></div>
+      <div class="d-stat"><b style="font-size:24px">{_esc(rel_when)}</b><span>Released</span></div>
+    </div>
+  </section>
+
+  <section class="d-section">
+    <h2>Links</h2>
+    <div class="d-actions" style="margin-top:18px">{out_links}<a class="btn" href="/">← Back to the board</a></div>
+    <p class="sublabel" style="margin-top:18px">Recomputed {_esc(recomputed)} · scored from public-repo GitHub activity.</p>
+  </section>
+</div></main>
+{_footer_html()}
+<script>
+/* speed-streaks hero — theme-aware (mirrors the hub) */
+(function(){{
+  if(window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  var cv=document.getElementById("streaks"); if(!cv) return;
+  var ctx=cv.getContext("2d"), W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,2), ps=[], raf;
+  var THEME={{dark:{{colors:["255,67,36","255,138,43","255,182,72"],comp:"lighter",aMul:1.0}},
+             light:{{colors:["232,53,26","217,101,26","204,120,30"],comp:"source-over",aMul:0.55}}}};
+  function curTheme(){{return document.documentElement.dataset.theme==="light"?THEME.light:THEME.dark;}}
+  var TH=curTheme();
+  function size(){{ W=cv.clientWidth; H=cv.clientHeight; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); build(); }}
+  function mk(){{ var sp=2.5+Math.random()*7; return {{ x:-Math.random()*W, y:Math.random()*H, len:60+Math.random()*180, sp:sp, w:Math.random()<0.2?1.8:0.8, c:TH.colors[(Math.random()*TH.colors.length)|0], a:0.10+Math.random()*0.35 }}; }}
+  function build(){{ var n=Math.max(18,Math.min(46,Math.round(W/26))); ps=[]; for(var i=0;i<n;i++){{var p=mk();p.x=Math.random()*W;ps.push(p);}} }}
+  function frame(){{
+    ctx.clearRect(0,0,W,H); ctx.globalCompositeOperation=TH.comp;
+    for(var i=0;i<ps.length;i++){{
+      var p=ps[i]; p.x+=p.sp; var a=(p.a*TH.aMul);
+      var g=ctx.createLinearGradient(p.x-p.len,p.y,p.x,p.y);
+      g.addColorStop(0,"rgba("+p.c+",0)"); g.addColorStop(1,"rgba("+p.c+","+a.toFixed(3)+")");
+      ctx.strokeStyle=g; ctx.lineWidth=p.w; ctx.beginPath(); ctx.moveTo(p.x-p.len,p.y); ctx.lineTo(p.x,p.y); ctx.stroke();
+      ctx.fillStyle="rgba("+p.c+","+Math.min(1,a+0.3).toFixed(3)+")"; ctx.fillRect(p.x-1,p.y-p.w/2,2,p.w);
+      if(p.x-p.len>W){{ ps[i]=mk(); }}
+    }}
+    raf=requestAnimationFrame(frame);
+  }}
+  window.addEventListener("av:themechange",function(){{ TH=curTheme(); build(); }});
+  size(); window.addEventListener("resize", size);
+  document.addEventListener("visibilitychange", function(){{ if(document.hidden){{cancelAnimationFrame(raf);}} else {{raf=requestAnimationFrame(frame);}} }});
+  raf=requestAnimationFrame(frame);
+}})();
+</script>
+{_THEME_TOGGLE_JS.replace("});})();", "window.dispatchEvent(new Event('av:themechange'));});})();")}
+</body>
+</html>
+"""
+
+
+def generate_details(data: dict) -> int:
+    """Write a/<slug>/index.html for every repo, plus sitemap.xml + llms.txt."""
+    repos = data.get("repos", [])
+    gen_at = data.get("generated_at")
+    a_dir = os.path.join(HERE, "a")
+    os.makedirs(a_dir, exist_ok=True)
+    written = 0
+    slugs = []
+    for r in repos:
+        slug = repo_slug(r)
+        slugs.append(slug)
+        d = os.path.join(a_dir, slug)
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, "index.html"), "w") as f:
+            f.write(_detail_html(r, gen_at))
+        written += 1
+    _write_sitemap(slugs)
+    _write_llms(data)
+    print(f"  generated {written} detail pages + sitemap + llms.txt", file=sys.stderr)
+    return written
+
+
+def _write_sitemap(slugs: list[str]) -> None:
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    rows = [f'  <url><loc>{SITE}/</loc><lastmod>{today}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>']
+    for s in slugs:
+        rows.append(f'  <url><loc>{SITE}/a/{s}/</loc><lastmod>{today}</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>')
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+           + "\n".join(rows) + "\n</urlset>\n")
+    with open(os.path.join(HERE, "sitemap.xml"), "w") as f:
+        f.write(xml)
+
+
+def _write_llms(data: dict) -> None:
+    repos = sorted(data.get("repos", []), key=lambda x: x.get("rank", 999))
+    lines = [
+        "# Agent Velocity",
+        "",
+        "> A live leaderboard ranking open-source coding agents by real GitHub **shipping velocity** — not by stars.",
+        "",
+        "## What this is",
+        "Agent Velocity scores every tracked open-source coding agent on a 0-100 velocity metric computed from commit cadence (55%), release recency (25%), and 6-month commit trend (20%). It answers: who is actually shipping fastest in the coding-agent race?",
+        "",
+        "## Source & cadence",
+        "- Data source: the public GitHub REST API (commits, releases, stars, forks, issues). Every number traces to a real API response — nothing is fabricated.",
+        "- Cadence: recomputed and redeployed **daily** by an autonomous agent (Kymata Labs agent stack).",
+        "- Caveat: velocity reflects *public-repo* activity only; privately developed agents rank below their true pace.",
+        "",
+        "## Routes",
+        "- `/` — the full leaderboard (podium + sortable table; filter by category; light/dark themes).",
+        "- `/a/<owner>-<name>/` — per-agent detail page: velocity, rank, stars, forks, open issues, language, latest release, and a 6-month commit sparkline.",
+        "",
+        f"## Tracked agents ({len(repos)})",
+    ]
+    for r in repos:
+        slug = repo_slug(r)
+        lines.append(f"- [{r.get('owner','')}/{r.get('name','')}]({SITE}/a/{slug}/) — {r.get('category','')} · velocity {r.get('momentum',0)}/100 · rank #{r.get('rank','—')}. {r.get('blurb','')}")
+    lines += [
+        "",
+        "## Publisher",
+        "Kymata Labs — https://kymatalabs.com/",
+        "",
+    ]
+    with open(os.path.join(HERE, "llms.txt"), "w") as f:
+        f.write("\n".join(lines))
 
 
 def main() -> int:
@@ -216,6 +588,11 @@ def main() -> int:
     if len(items) < floor:
         print(f"GUARD: only {len(items)}/{expected} repos fetched (< {floor}); refusing to publish.", file=sys.stderr)
         return 1
+    # static detail pages + sitemap + llms.txt (only on a healthy, non-guarded run)
+    try:
+        generate_details(data)
+    except Exception as e:
+        print(f"  detail generation failed: {e}", file=sys.stderr)
     return 0
 
 
