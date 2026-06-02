@@ -15,7 +15,7 @@
     var mx=Math.max.apply(null,arr),mn=Math.min.apply(null,arr),rg=(mx-mn)||1,n=arr.length,pad=2;
     var pts=arr.map(function(v,i){return (pad+i*(w-2*pad)/(n-1)).toFixed(1)+","+(h-pad-((v-mn)/rg)*(h-2*pad)).toFixed(1);}).join(" ");
     var lx=(w-pad).toFixed(1),ly=(h-pad-((arr[n-1]-mn)/rg)*(h-2*pad)).toFixed(1);
-    return '<svg class="spark" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" aria-hidden="true"><polyline points="'+pts+'" fill="none" stroke="#0f766e" stroke-width="1.4" stroke-linejoin="round"/><circle cx="'+lx+'" cy="'+ly+'" r="2" fill="#c2410c"/></svg>';
+    return '<svg class="spark" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" aria-hidden="true"><polyline points="'+pts+'" fill="none" stroke="#ff8a2b" stroke-width="1.4" stroke-linejoin="round"/><circle cx="'+lx+'" cy="'+ly+'" r="2" fill="#ff4324"/></svg>';
   }
   function trend(d){if(d>3)return'<span class="t up">▲ '+d+'/mo</span>';if(d<-3)return'<span class="t dn">▼ '+Math.abs(d)+'/mo</span>';return'<span class="t flat">→ steady</span>';}
   function repoUrl(r){var u=safeUrl(r.html_url);if(u)return u;if(r.owner&&r.name)return"https://github.com/"+encodeURIComponent(r.owner)+"/"+encodeURIComponent(r.name);return"#";}
