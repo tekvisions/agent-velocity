@@ -75,17 +75,25 @@
 
 <section id="board"><div class="wrap">
   <div class="controls">
-    <div class="filters" id="filters"></div>
-    <div class="sortnote" id="sortnote">Ranked by velocity ↓</div>
+    <div class="filters" id="filters" role="group" aria-label="Filter agents by category"></div>
+    <div class="searchwrap">
+      <svg class="s-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="search" type="search" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Filter the grid…" aria-label="Search agents by name, category, or language">
+      <button id="searchclear" type="button" class="s-clear" aria-label="Clear search" hidden>×</button>
+    </div>
+  </div>
+  <div class="sortbar">
+    <span class="sortnote" id="sortnote" role="status" aria-live="polite">Ranked by velocity ↓</span>
+    <span class="resultcount" id="resultcount" aria-live="polite"></span>
   </div>
   <div class="bhead" role="row">
     <span>#</span>
-    <span>Agent</span>
+    <span class="c-n sortable" role="columnheader" tabindex="0" data-sort="name" aria-sort="none">Agent <span class="arrow">▼</span></span>
     <span class="c-v sortable" role="columnheader" tabindex="0" data-sort="momentum" aria-sort="descending">Velocity <span class="arrow">▼</span></span>
     <span class="c-s sortable" role="columnheader" tabindex="0" data-sort="recent4w_commits" aria-sort="none">Commits · 6mo <span class="arrow">▼</span></span>
     <span class="r sortable" role="columnheader" tabindex="0" data-sort="stars" aria-sort="none">Stars <span class="arrow">▼</span></span>
   </div>
-  <div class="board" id="lboard"><div class="loading">Warming up the grid…</div></div>
+  <div class="board" id="lboard" aria-live="polite"><div class="loading">Warming up the grid…</div></div>
 </div></section>
 
 <footer id="how"><div class="wrap">

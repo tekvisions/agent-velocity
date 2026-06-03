@@ -185,6 +185,143 @@ def _spark_svg(arr, w=720, h=160) -> str:
     )
 
 
+def _months_ago_label(i: int, n: int) -> str:
+    """Label for bucket i (0=oldest) in an n-bucket series of 30-day windows."""
+    back = n - 1 - i
+    if back == 0:
+        return "now"
+    return f"−{back}mo"
+
+
+def _commit_bars(arr) -> str:
+    """Labeled monthly-commit bar chart for the detail page. Each ~30d bucket gets
+    a bar (height ∝ commits) + the real count + a months-ago label. The final bar
+    (this month) is highlighted as the velocity input."""
+    arr = [int(x or 0) for x in (arr or [])]
+    n = len(arr)
+    if n < 2:
+        return ""
+    mx = max(arr) or 1
+    bars = []
+    for i, v in enumerate(arr):
+        pct = max(2, round(v / mx * 100))
+        last = i == n - 1
+        cls = "cb-bar cb-now" if last else "cb-bar"
+        cap = f"{v:,}" if v >= 1000 else str(v)
+        bars.append(
+            f'<div class="cb-col" title="{cap} commits · {_months_ago_label(i,n)}">'
+            f'<span class="cb-val">{cap}</span>'
+            f'<div class="cb-track"><i class="{cls}" style="height:{pct}%"></i></div>'
+            f'<span class="cb-x">{_months_ago_label(i,n)}</span></div>'
+        )
+    return '<div class="commitbars" role="img" aria-label="Monthly commit counts, last 6 months">' + "".join(bars) + "</div>"
+
+
+def _velocity_components(r: dict) -> dict:
+    """Reconstruct the EXACT momentum() sub-scores so the detail page can show the
+    math. Mirrors momentum() in this file — keep in sync if the formula changes."""
+    recent4 = int(r.get("recent4w_commits", 0) or 0)
+    prior4 = int(r.get("prior4w_commits", 0) or 0)
+    d_rel = days_since(r.get("last_release_at"))
+    act = min(recent4 / 400.0, 1.0)
+    if d_rel is None:
+        rel = 0.2
+    else:
+        rel = max(0.0, 1.0 - max(0.0, d_rel - 30) / 240.0)
+    if prior4 > 0:
+        tr = min(max((recent4 - prior4) / prior4 * 0.5 + 0.5, 0.0), 1.0)
+    else:
+        tr = 0.7 if recent4 > 0 else 0.5
+    return {
+        "act": act, "rel": rel, "tr": tr,
+        "act_pts": 0.55 * act * 100, "rel_pts": 0.25 * rel * 100, "tr_pts": 0.20 * tr * 100,
+        "recent4": recent4, "prior4": prior4, "d_rel": d_rel,
+    }
+
+
+def _score_rows(r: dict) -> str:
+    """Three weighted-component rows (cadence / release / trend) that visibly sum
+    to the velocity score. Every number is derived from real GitHub signals."""
+    c = _velocity_components(r)
+    recent4, prior4 = c["recent4"], c["prior4"]
+    # cadence detail
+    cad_detail = f"{recent4:,} commits in the last 4 weeks (saturates at 400)"
+    # release detail
+    if c["d_rel"] is None:
+        rel_detail = "no stable GitHub release — scored at the floor"
+    else:
+        days = int(round(c["d_rel"]))
+        rel_detail = f"last release {days}d ago (full credit ≤30d, fades to 0 by 270d)"
+    # trend detail
+    if prior4 > 0:
+        diff = recent4 - prior4
+        sign = "+" if diff >= 0 else "−"
+        rel_pct = abs(diff) / prior4 * 100
+        tr_detail = f"{sign}{abs(diff):,} vs prior 4 weeks ({sign}{rel_pct:.0f}%)"
+    else:
+        tr_detail = "no commits in the prior window to compare"
+
+    def row(label, weight, sub01, pts, detail):
+        meter = round(sub01 * 100)
+        return (
+            '<div class="sc-row">'
+            f'<div class="sc-head"><span class="sc-name">{label}</span>'
+            f'<span class="sc-weight">{weight}% weight</span></div>'
+            f'<div class="sc-meter"><i style="width:{meter}%"></i></div>'
+            f'<div class="sc-foot"><span class="sc-detail">{detail}</span>'
+            f'<span class="sc-pts">+{pts:.0f} pts</span></div>'
+            '</div>'
+        )
+    mom = int(r.get("momentum", 0) or 0)
+    return (
+        row("Commit cadence", 55, c["act"], c["act_pts"], cad_detail)
+        + row("Release recency", 25, c["rel"], c["rel_pts"], rel_detail)
+        + row("6-month trend", 20, c["tr"], c["tr_pts"], tr_detail)
+        + f'<div class="sc-total"><span>Velocity score</span><b>{mom} <span class="sc-of">/ 100</span></b></div>'
+    )
+
+
+def _peers_html(r: dict, all_repos: list) -> str:
+    """Other tracked agents in the same category, linked, ranked by velocity — so a
+    reader can evaluate this agent against its real competitive set."""
+    cat = r.get("category", "")
+    me = repo_slug(r)
+    peers = [p for p in all_repos if p.get("category") == cat and repo_slug(p) != me]
+    peers.sort(key=lambda x: x.get("momentum", 0), reverse=True)
+    if not peers:
+        return '<p class="sublabel" style="margin-top:18px">The only tracked agent in this category.</p>'
+    cards = []
+    for p in peers:
+        pslug = repo_slug(p)
+        pm = int(p.get("momentum", 0) or 0)
+        prank = p.get("rank", "—")
+        cards.append(
+            f'<a class="peer" href="/a/{pslug}/">'
+            f'<span class="peer-rank">#{prank}</span>'
+            f'<span class="peer-name">{_esc(p.get("name",""))}</span>'
+            f'<span class="peer-meter"><i style="width:{pm}%"></i></span>'
+            f'<span class="peer-v">{pm}</span></a>'
+        )
+    return '<div class="peergrid">' + "".join(cards) + "</div>"
+
+
+def _posture(r: dict) -> dict:
+    """Race posture from commit delta — mirrors app.js posture()."""
+    d = int(r.get("commit_delta", 0) or 0)
+    prior = int(r.get("prior4w_commits", 0) or 0)
+    recent = int(r.get("recent4w_commits", 0) or 0)
+    pct = (d / prior) if prior > 0 else (1.0 if recent > 0 else 0.0)
+    if d > 3 and pct >= 0.12:
+        return {"k": "surge", "label": "Accelerating", "icon": "▲"}
+    if d > 3:
+        return {"k": "up", "label": "Gaining", "icon": "▲"}
+    if d < -3 and pct <= -0.12:
+        return {"k": "brake", "label": "Braking", "icon": "▼"}
+    if d < -3:
+        return {"k": "down", "label": "Easing", "icon": "▼"}
+    return {"k": "flat", "label": "Holding", "icon": "→"}
+
+
 def _nav_html() -> str:
     return (
         '<nav id="nav"><div class="wrap nav-in">'
@@ -229,7 +366,8 @@ _THEME_TOGGLE_JS = (
 )
 
 
-def _detail_html(r: dict, generated_at: str | None) -> str:
+def _detail_html(r: dict, generated_at: str | None, all_repos: list | None = None) -> str:
+    all_repos = all_repos or []
     slug = repo_slug(r)
     url = f"{SITE}/a/{slug}/"
     name = r.get("name", "")
@@ -245,11 +383,14 @@ def _detail_html(r: dict, generated_at: str | None) -> str:
     issues = int(r.get("open_issues", 0) or 0)
     mom = int(r.get("momentum", 0) or 0)
     r4 = int(r.get("recent4w_commits", 0) or 0)
+    p4 = int(r.get("prior4w_commits", 0) or 0)
     delta = int(r.get("commit_delta", 0) or 0)
     rel_tag = r.get("last_release") or "—"
     rel_when = _rel_date(r.get("last_release_at"))
     gh_url = r.get("html_url") or f"https://github.com/{owner}/{name}"
     home = (r.get("homepage") or "").strip()
+    total = len(all_repos) or r.get("repo_count") or 0
+    pos = _posture(r)
     title = f"{name} — velocity {mom} · #{rank} | Agent Velocity"
     desc = (f"{full}: shipping velocity {mom}/100, ranked #{rank} among open-source coding agents. "
             f"{r4} commits in the last 4 weeks, {_fmt_stars(stars)} stars. {blurb}").strip()
@@ -265,6 +406,27 @@ def _detail_html(r: dict, generated_at: str | None) -> str:
 
     monthly = r.get("monthly_commits") or []
     axis = '<div class="axis"><span>6 months ago</span><span>now</span></div>' if len(monthly) >= 2 else ""
+    bars = _commit_bars(monthly)
+    score_rows = _score_rows(r)
+    peers = _peers_html(r, all_repos)
+
+    # 6-month commit totals for the panel header
+    six_total = sum(int(x or 0) for x in monthly)
+
+    # star history: real series if we have ≥2 datapoints, else a single tracked point
+    shist = r.get("stars_history") or []
+    if len(shist) >= 2:
+        star_series = [int(h.get("stars", 0) or 0) for h in shist]
+        star_panel_note = f"day-over-day, last {len(shist)} days tracked"
+        star_chart = f'<div class="d-spark mini">{_spark_svg(star_series, 720, 90)}</div>'
+    else:
+        since = shist[0].get("date") if shist else None
+        star_panel_note = (f"tracking since {since} — the day-over-day curve fills in as the board runs"
+                           if since else "history fills in as the board runs daily")
+        star_chart = ""
+
+    # fork ratio (engagement signal) — forks per 1k stars
+    fork_ratio = f"{forks/stars*1000:.0f}" if stars else "—"
 
     out_links = f'<a class="btn primary" href="{_esc(gh_url)}" target="_blank" rel="noopener">View on GitHub ↗</a>'
     if home:
@@ -342,14 +504,14 @@ def _detail_html(r: dict, generated_at: str | None) -> str:
     <div class="d-rank {rclass}"><span class="hash">#</span>{rank}</div>
     <div class="d-titlewrap">
       <h1>{_esc(name)}</h1>
-      <div class="d-owner">{_esc(owner)} · <span class="d-cat">{_esc(cat)}</span></div>
+      <div class="d-owner">{_esc(owner)} · <span class="d-cat">{_esc(cat)}</span> · <span class="d-pos {pos['k']}">{pos['icon']} {_esc(pos['label'])}</span></div>
     </div>
   </div>
   <p class="d-blurb">{_esc(blurb)}</p>
   <div class="d-actions">{out_links}</div>
 
   <div class="d-grid">
-    <div class="d-stat"><b>{mom}</b><span>Velocity / 100</span></div>
+    <div class="d-stat hot"><b>{mom}</b><span>Velocity / 100</span><div class="sub">rank #{rank} of {total}</div></div>
     <div class="d-stat"><b>{r4}</b><span>Commits · last 4w</span>{delta_sub}</div>
     <div class="d-stat"><b>{_fmt_stars(stars)}</b><span>Stars</span></div>
     <div class="d-stat"><b>{_fmt_stars(forks)}</b><span>Forks</span></div>
@@ -358,18 +520,39 @@ def _detail_html(r: dict, generated_at: str | None) -> str:
   </div>
 
   <section class="d-section">
+    <h2>How the velocity score is built</h2>
+    <p class="sublabel">A 0–100 measure of <em>shipping pace</em> — weighted from three real GitHub signals. Every number below traces to the live API.</p>
+    <div class="scorecard">{score_rows}</div>
+  </section>
+
+  <section class="d-section">
     <h2>Shipping momentum</h2>
-    <p class="sublabel">Monthly commits · last 6 months (real GitHub commit history)</p>
+    <p class="sublabel">Monthly commits · last 6 months · {six_total:,} total (real GitHub commit history)</p>
     <div class="d-spark">{_spark_svg(monthly)}{axis}</div>
-    <div class="d-velbar">
-      <div class="bar"><i style="width:{mom}%"></i></div>
-      <div class="lbl"><span>velocity score</span><b>{mom} / 100</b></div>
+    {bars}
+    <div class="d-compare">
+      <div class="cmp"><span class="cmp-l">Last 4 weeks</span><b>{r4:,}</b></div>
+      <div class="cmp-arrow {pos['k']}">{pos['icon']}</div>
+      <div class="cmp"><span class="cmp-l">Prior 4 weeks</span><b class="muted">{p4:,}</b></div>
+      <div class="cmp-verdict {pos['k']}">{_esc(pos['label'])}{(' · ' + ('+' if delta>=0 else '−') + str(abs(delta)) + ' commits') if p4 or r4 else ''}</div>
+    </div>
+  </section>
+
+  <section class="d-section">
+    <h2>Stars &amp; reach</h2>
+    <p class="sublabel">{_esc(star_panel_note)}</p>
+    {star_chart}
+    <div class="d-grid" style="margin-top:22px">
+      <div class="d-stat"><b>{_fmt_stars(stars)}</b><span>Stars</span></div>
+      <div class="d-stat"><b>{_fmt_stars(forks)}</b><span>Forks</span></div>
+      <div class="d-stat"><b>{fork_ratio}</b><span>Forks · per 1k stars</span></div>
+      <div class="d-stat"><b>{_fmt_stars(issues)}</b><span>Open issues</span></div>
     </div>
   </section>
 
   <section class="d-section">
     <h2>Latest release</h2>
-    <p class="sublabel">Newest stable tag on GitHub</p>
+    <p class="sublabel">Newest stable tag on GitHub — release recency is 25% of the velocity score</p>
     <div class="d-grid" style="margin-top:22px">
       <div class="d-stat"><b style="font-size:24px">{_esc(rel_tag)}</b><span>Tag</span></div>
       <div class="d-stat"><b style="font-size:24px">{_esc(rel_when)}</b><span>Released</span></div>
@@ -377,9 +560,15 @@ def _detail_html(r: dict, generated_at: str | None) -> str:
   </section>
 
   <section class="d-section">
+    <h2>Category peers · {_esc(cat)}</h2>
+    <p class="sublabel">How {_esc(name)} stacks up against the rest of the {_esc(cat)} field, ranked by velocity</p>
+    {peers}
+  </section>
+
+  <section class="d-section">
     <h2>Links</h2>
     <div class="d-actions" style="margin-top:18px">{out_links}<a class="btn" href="/">← Back to the board</a></div>
-    <p class="sublabel" style="margin-top:18px">Recomputed {_esc(recomputed)} · scored from public-repo GitHub activity.</p>
+    <p class="sublabel" style="margin-top:18px">Recomputed {_esc(recomputed)} · scored from public-repo GitHub activity. Velocity = commit cadence (55%) + release recency (25%) + 6-month trend (20%).</p>
   </section>
 </div></main>
 {_footer_html()}
@@ -434,7 +623,7 @@ def generate_details(data: dict) -> int:
         d = os.path.join(a_dir, slug)
         os.makedirs(d, exist_ok=True)
         with open(os.path.join(d, "index.html"), "w") as f:
-            f.write(_detail_html(r, gen_at))
+            f.write(_detail_html(r, gen_at, repos))
         written += 1
     _write_sitemap(slugs)
     _write_llms(data)

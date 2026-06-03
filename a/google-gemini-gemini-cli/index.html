@@ -38,14 +38,14 @@
     <div class="d-rank "><span class="hash">#</span>8</div>
     <div class="d-titlewrap">
       <h1>gemini-cli</h1>
-      <div class="d-owner">google-gemini · <span class="d-cat">CLI</span></div>
+      <div class="d-owner">google-gemini · <span class="d-cat">CLI</span> · <span class="d-pos brake">▼ Braking</span></div>
     </div>
   </div>
   <p class="d-blurb">Google&#39;s open-source AI agent that brings Gemini to your terminal.</p>
   <div class="d-actions"><a class="btn primary" href="https://github.com/google-gemini/gemini-cli" target="_blank" rel="noopener">View on GitHub ↗</a><a class="btn" href="https://geminicli.com" target="_blank" rel="noopener">Homepage ↗</a></div>
 
   <div class="d-grid">
-    <div class="d-stat"><b>60</b><span>Velocity / 100</span></div>
+    <div class="d-stat hot"><b>60</b><span>Velocity / 100</span><div class="sub">rank #8 of 14</div></div>
     <div class="d-stat"><b>212</b><span>Commits · last 4w</span><div class="sub" style="color:var(--muted)">▼ 140 fewer than prior 4w</div></div>
     <div class="d-stat"><b>105k</b><span>Stars</span></div>
     <div class="d-stat"><b>14k</b><span>Forks</span></div>
@@ -54,28 +54,55 @@
   </div>
 
   <section class="d-section">
+    <h2>How the velocity score is built</h2>
+    <p class="sublabel">A 0–100 measure of <em>shipping pace</em> — weighted from three real GitHub signals. Every number below traces to the live API.</p>
+    <div class="scorecard"><div class="sc-row"><div class="sc-head"><span class="sc-name">Commit cadence</span><span class="sc-weight">55% weight</span></div><div class="sc-meter"><i style="width:53%"></i></div><div class="sc-foot"><span class="sc-detail">212 commits in the last 4 weeks (saturates at 400)</span><span class="sc-pts">+29 pts</span></div></div><div class="sc-row"><div class="sc-head"><span class="sc-name">Release recency</span><span class="sc-weight">25% weight</span></div><div class="sc-meter"><i style="width:100%"></i></div><div class="sc-foot"><span class="sc-detail">last release 6d ago (full credit ≤30d, fades to 0 by 270d)</span><span class="sc-pts">+25 pts</span></div></div><div class="sc-row"><div class="sc-head"><span class="sc-name">6-month trend</span><span class="sc-weight">20% weight</span></div><div class="sc-meter"><i style="width:30%"></i></div><div class="sc-foot"><span class="sc-detail">−140 vs prior 4 weeks (−40%)</span><span class="sc-pts">+6 pts</span></div></div><div class="sc-total"><span>Velocity score</span><b>60 <span class="sc-of">/ 100</span></b></div></div>
+  </section>
+
+  <section class="d-section">
     <h2>Shipping momentum</h2>
-    <p class="sublabel">Monthly commits · last 6 months (real GitHub commit history)</p>
+    <p class="sublabel">Monthly commits · last 6 months · 2,722 total (real GitHub commit history)</p>
     <div class="d-spark"><svg viewBox="0 0 720 160" preserveAspectRatio="none" role="img" aria-label="Monthly commit trend, last 6 months"><defs><linearGradient id="avfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4324" stop-opacity="0.28"/><stop offset="1" stop-color="#ff4324" stop-opacity="0"/></linearGradient></defs><polygon points="6.0,154.0 6.0,147.6 147.6,31.8 289.2,28.4 430.8,6.0 572.4,111.0 714.0,154.0 714.0,154.0" fill="url(#avfill)"/><polyline points="6.0,147.6 147.6,31.8 289.2,28.4 430.8,6.0 572.4,111.0 714.0,154.0" fill="none" stroke="#ff8a2b" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="714.0" cy="154.0" r="4" fill="#ff4324"/></svg><div class="axis"><span>6 months ago</span><span>now</span></div></div>
-    <div class="d-velbar">
-      <div class="bar"><i style="width:60%"></i></div>
-      <div class="lbl"><span>velocity score</span><b>60 / 100</b></div>
+    <div class="commitbars" role="img" aria-label="Monthly commit counts, last 6 months"><div class="cb-col" title="233 commits · −5mo"><span class="cb-val">233</span><div class="cb-track"><i class="cb-bar" style="height:34%"></i></div><span class="cb-x">−5mo</span></div><div class="cb-col" title="610 commits · −4mo"><span class="cb-val">610</span><div class="cb-track"><i class="cb-bar" style="height:88%"></i></div><span class="cb-x">−4mo</span></div><div class="cb-col" title="621 commits · −3mo"><span class="cb-val">621</span><div class="cb-track"><i class="cb-bar" style="height:89%"></i></div><span class="cb-x">−3mo</span></div><div class="cb-col" title="694 commits · −2mo"><span class="cb-val">694</span><div class="cb-track"><i class="cb-bar" style="height:100%"></i></div><span class="cb-x">−2mo</span></div><div class="cb-col" title="352 commits · −1mo"><span class="cb-val">352</span><div class="cb-track"><i class="cb-bar" style="height:51%"></i></div><span class="cb-x">−1mo</span></div><div class="cb-col" title="212 commits · now"><span class="cb-val">212</span><div class="cb-track"><i class="cb-bar cb-now" style="height:31%"></i></div><span class="cb-x">now</span></div></div>
+    <div class="d-compare">
+      <div class="cmp"><span class="cmp-l">Last 4 weeks</span><b>212</b></div>
+      <div class="cmp-arrow brake">▼</div>
+      <div class="cmp"><span class="cmp-l">Prior 4 weeks</span><b class="muted">352</b></div>
+      <div class="cmp-verdict brake">Braking · −140 commits</div>
+    </div>
+  </section>
+
+  <section class="d-section">
+    <h2>Stars &amp; reach</h2>
+    <p class="sublabel">tracking since 2026-06-01 — the day-over-day curve fills in as the board runs</p>
+    
+    <div class="d-grid" style="margin-top:22px">
+      <div class="d-stat"><b>105k</b><span>Stars</span></div>
+      <div class="d-stat"><b>14k</b><span>Forks</span></div>
+      <div class="d-stat"><b>133</b><span>Forks · per 1k stars</span></div>
+      <div class="d-stat"><b>1.4k</b><span>Open issues</span></div>
     </div>
   </section>
 
   <section class="d-section">
     <h2>Latest release</h2>
-    <p class="sublabel">Newest stable tag on GitHub</p>
+    <p class="sublabel">Newest stable tag on GitHub — release recency is 25% of the velocity score</p>
     <div class="d-grid" style="margin-top:22px">
       <div class="d-stat"><b style="font-size:24px">v0.44.1</b><span>Tag</span></div>
-      <div class="d-stat"><b style="font-size:24px">4d ago</b><span>Released</span></div>
+      <div class="d-stat"><b style="font-size:24px">6d ago</b><span>Released</span></div>
     </div>
+  </section>
+
+  <section class="d-section">
+    <h2>Category peers · CLI</h2>
+    <p class="sublabel">How gemini-cli stacks up against the rest of the CLI field, ranked by velocity</p>
+    <div class="peergrid"><a class="peer" href="/a/sst-opencode/"><span class="peer-rank">#1</span><span class="peer-name">opencode</span><span class="peer-meter"><i style="width:92%"></i></span><span class="peer-v">92</span></a><a class="peer" href="/a/openai-codex/"><span class="peer-rank">#2</span><span class="peer-name">codex</span><span class="peer-meter"><i style="width:88%"></i></span><span class="peer-v">88</span></a><a class="peer" href="/a/qwenlm-qwen-code/"><span class="peer-rank">#4</span><span class="peer-name">qwen-code</span><span class="peer-meter"><i style="width:82%"></i></span><span class="peer-v">82</span></a><a class="peer" href="/a/block-goose/"><span class="peer-rank">#6</span><span class="peer-name">goose</span><span class="peer-meter"><i style="width:77%"></i></span><span class="peer-v">77</span></a><a class="peer" href="/a/charmbracelet-crush/"><span class="peer-rank">#7</span><span class="peer-name">crush</span><span class="peer-meter"><i style="width:74%"></i></span><span class="peer-v">74</span></a><a class="peer" href="/a/anthropics-claude-code/"><span class="peer-rank">#11</span><span class="peer-name">claude-code</span><span class="peer-meter"><i style="width:42%"></i></span><span class="peer-v">42</span></a><a class="peer" href="/a/aider-ai-aider/"><span class="peer-rank">#14</span><span class="peer-name">aider</span><span class="peer-meter"><i style="width:4%"></i></span><span class="peer-v">4</span></a></div>
   </section>
 
   <section class="d-section">
     <h2>Links</h2>
     <div class="d-actions" style="margin-top:18px"><a class="btn primary" href="https://github.com/google-gemini/gemini-cli" target="_blank" rel="noopener">View on GitHub ↗</a><a class="btn" href="https://geminicli.com" target="_blank" rel="noopener">Homepage ↗</a><a class="btn" href="/">← Back to the board</a></div>
-    <p class="sublabel" style="margin-top:18px">Recomputed today · scored from public-repo GitHub activity.</p>
+    <p class="sublabel" style="margin-top:18px">Recomputed 2d ago · scored from public-repo GitHub activity. Velocity = commit cadence (55%) + release recency (25%) + 6-month trend (20%).</p>
   </section>
 </div></main>
 <footer><div class="wrap"><span class="mono" style="color:var(--hot-2)">How it's made</span><h2>The race, scored by <em>shipping</em> — not hype.</h2><p>An AI agent pulls live GitHub signals for every coding agent daily, scores velocity as commit cadence (55%) + release recency (25%) + 6-month trend (20%), and redeploys this board. Built and run by the same agent stack as <a class="inl" href="https://kymatalabs.com/" target="_blank" rel="noopener">Kymata Labs</a>.</p><div class="foot-row"><a href="/">← All agents</a><span>© 2026 Kymata Labs · Agent Velocity</span><a href="https://kymatalabs.com/">kymatalabs ↗</a></div></div></footer>

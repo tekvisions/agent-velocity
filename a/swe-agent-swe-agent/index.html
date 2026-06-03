@@ -38,14 +38,14 @@
     <div class="d-rank "><span class="hash">#</span>13</div>
     <div class="d-titlewrap">
       <h1>SWE-agent</h1>
-      <div class="d-owner">SWE-agent · <span class="d-cat">Autonomous</span></div>
+      <div class="d-owner">SWE-agent · <span class="d-cat">Autonomous</span> · <span class="d-pos flat">→ Holding</span></div>
     </div>
   </div>
   <p class="d-blurb">Princeton&#39;s agent that fixes real GitHub issues autonomously.</p>
   <div class="d-actions"><a class="btn primary" href="https://github.com/SWE-agent/SWE-agent" target="_blank" rel="noopener">View on GitHub ↗</a><a class="btn" href="https://swe-agent.com" target="_blank" rel="noopener">Homepage ↗</a></div>
 
   <div class="d-grid">
-    <div class="d-stat"><b>14</b><span>Velocity / 100</span></div>
+    <div class="d-stat hot"><b>14</b><span>Velocity / 100</span><div class="sub">rank #13 of 14</div></div>
     <div class="d-stat"><b>1</b><span>Commits · last 4w</span><div class="sub" style="color:var(--muted)">→ steady vs prior 4w</div></div>
     <div class="d-stat"><b>19k</b><span>Stars</span></div>
     <div class="d-stat"><b>2.1k</b><span>Forks</span></div>
@@ -54,18 +54,39 @@
   </div>
 
   <section class="d-section">
+    <h2>How the velocity score is built</h2>
+    <p class="sublabel">A 0–100 measure of <em>shipping pace</em> — weighted from three real GitHub signals. Every number below traces to the live API.</p>
+    <div class="scorecard"><div class="sc-row"><div class="sc-head"><span class="sc-name">Commit cadence</span><span class="sc-weight">55% weight</span></div><div class="sc-meter"><i style="width:0%"></i></div><div class="sc-foot"><span class="sc-detail">1 commits in the last 4 weeks (saturates at 400)</span><span class="sc-pts">+0 pts</span></div></div><div class="sc-row"><div class="sc-head"><span class="sc-name">Release recency</span><span class="sc-weight">25% weight</span></div><div class="sc-meter"><i style="width:0%"></i></div><div class="sc-foot"><span class="sc-detail">last release 377d ago (full credit ≤30d, fades to 0 by 270d)</span><span class="sc-pts">+0 pts</span></div></div><div class="sc-row"><div class="sc-head"><span class="sc-name">6-month trend</span><span class="sc-weight">20% weight</span></div><div class="sc-meter"><i style="width:70%"></i></div><div class="sc-foot"><span class="sc-detail">no commits in the prior window to compare</span><span class="sc-pts">+14 pts</span></div></div><div class="sc-total"><span>Velocity score</span><b>14 <span class="sc-of">/ 100</span></b></div></div>
+  </section>
+
+  <section class="d-section">
     <h2>Shipping momentum</h2>
-    <p class="sublabel">Monthly commits · last 6 months (real GitHub commit history)</p>
+    <p class="sublabel">Monthly commits · last 6 months · 32 total (real GitHub commit history)</p>
     <div class="d-spark"><svg viewBox="0 0 720 160" preserveAspectRatio="none" role="img" aria-label="Monthly commit trend, last 6 months"><defs><linearGradient id="avfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4324" stop-opacity="0.28"/><stop offset="1" stop-color="#ff4324" stop-opacity="0"/></linearGradient></defs><polygon points="6.0,154.0 6.0,140.5 147.6,147.3 289.2,6.0 430.8,113.6 572.4,154.0 714.0,147.3 714.0,154.0" fill="url(#avfill)"/><polyline points="6.0,140.5 147.6,147.3 289.2,6.0 430.8,113.6 572.4,154.0 714.0,147.3" fill="none" stroke="#ff8a2b" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="714.0" cy="147.3" r="4" fill="#ff4324"/></svg><div class="axis"><span>6 months ago</span><span>now</span></div></div>
-    <div class="d-velbar">
-      <div class="bar"><i style="width:14%"></i></div>
-      <div class="lbl"><span>velocity score</span><b>14 / 100</b></div>
+    <div class="commitbars" role="img" aria-label="Monthly commit counts, last 6 months"><div class="cb-col" title="2 commits · −5mo"><span class="cb-val">2</span><div class="cb-track"><i class="cb-bar" style="height:9%"></i></div><span class="cb-x">−5mo</span></div><div class="cb-col" title="1 commits · −4mo"><span class="cb-val">1</span><div class="cb-track"><i class="cb-bar" style="height:5%"></i></div><span class="cb-x">−4mo</span></div><div class="cb-col" title="22 commits · −3mo"><span class="cb-val">22</span><div class="cb-track"><i class="cb-bar" style="height:100%"></i></div><span class="cb-x">−3mo</span></div><div class="cb-col" title="6 commits · −2mo"><span class="cb-val">6</span><div class="cb-track"><i class="cb-bar" style="height:27%"></i></div><span class="cb-x">−2mo</span></div><div class="cb-col" title="0 commits · −1mo"><span class="cb-val">0</span><div class="cb-track"><i class="cb-bar" style="height:2%"></i></div><span class="cb-x">−1mo</span></div><div class="cb-col" title="1 commits · now"><span class="cb-val">1</span><div class="cb-track"><i class="cb-bar cb-now" style="height:5%"></i></div><span class="cb-x">now</span></div></div>
+    <div class="d-compare">
+      <div class="cmp"><span class="cmp-l">Last 4 weeks</span><b>1</b></div>
+      <div class="cmp-arrow flat">→</div>
+      <div class="cmp"><span class="cmp-l">Prior 4 weeks</span><b class="muted">0</b></div>
+      <div class="cmp-verdict flat">Holding · +1 commits</div>
+    </div>
+  </section>
+
+  <section class="d-section">
+    <h2>Stars &amp; reach</h2>
+    <p class="sublabel">tracking since 2026-06-01 — the day-over-day curve fills in as the board runs</p>
+    
+    <div class="d-grid" style="margin-top:22px">
+      <div class="d-stat"><b>19k</b><span>Stars</span></div>
+      <div class="d-stat"><b>2.1k</b><span>Forks</span></div>
+      <div class="d-stat"><b>109</b><span>Forks · per 1k stars</span></div>
+      <div class="d-stat"><b>38</b><span>Open issues</span></div>
     </div>
   </section>
 
   <section class="d-section">
     <h2>Latest release</h2>
-    <p class="sublabel">Newest stable tag on GitHub</p>
+    <p class="sublabel">Newest stable tag on GitHub — release recency is 25% of the velocity score</p>
     <div class="d-grid" style="margin-top:22px">
       <div class="d-stat"><b style="font-size:24px">v1.1.0</b><span>Tag</span></div>
       <div class="d-stat"><b style="font-size:24px">1y ago</b><span>Released</span></div>
@@ -73,9 +94,15 @@
   </section>
 
   <section class="d-section">
+    <h2>Category peers · Autonomous</h2>
+    <p class="sublabel">How SWE-agent stacks up against the rest of the Autonomous field, ranked by velocity</p>
+    <div class="peergrid"><a class="peer" href="/a/openhands-openhands/"><span class="peer-rank">#10</span><span class="peer-name">OpenHands</span><span class="peer-meter"><i style="width:46%"></i></span><span class="peer-v">46</span></a></div>
+  </section>
+
+  <section class="d-section">
     <h2>Links</h2>
     <div class="d-actions" style="margin-top:18px"><a class="btn primary" href="https://github.com/SWE-agent/SWE-agent" target="_blank" rel="noopener">View on GitHub ↗</a><a class="btn" href="https://swe-agent.com" target="_blank" rel="noopener">Homepage ↗</a><a class="btn" href="/">← Back to the board</a></div>
-    <p class="sublabel" style="margin-top:18px">Recomputed today · scored from public-repo GitHub activity.</p>
+    <p class="sublabel" style="margin-top:18px">Recomputed 2d ago · scored from public-repo GitHub activity. Velocity = commit cadence (55%) + release recency (25%) + 6-month trend (20%).</p>
   </section>
 </div></main>
 <footer><div class="wrap"><span class="mono" style="color:var(--hot-2)">How it's made</span><h2>The race, scored by <em>shipping</em> — not hype.</h2><p>An AI agent pulls live GitHub signals for every coding agent daily, scores velocity as commit cadence (55%) + release recency (25%) + 6-month trend (20%), and redeploys this board. Built and run by the same agent stack as <a class="inl" href="https://kymatalabs.com/" target="_blank" rel="noopener">Kymata Labs</a>.</p><div class="foot-row"><a href="/">← All agents</a><span>© 2026 Kymata Labs · Agent Velocity</span><a href="https://kymatalabs.com/">kymatalabs ↗</a></div></div></footer>
