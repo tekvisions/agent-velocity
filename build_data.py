@@ -185,6 +185,93 @@ def _spark_svg(arr, w=720, h=160) -> str:
     )
 
 
+def _badge_svg(r: dict) -> str:
+    """shields.io-style embeddable rank badge. Left label "Agent Velocity",
+    right "#<rank>" in the app's hot ember; appends "▲N" when the repo climbed
+    (rank_delta > 0). Self-contained, theme-neutral, accessible (role/title).
+    Character-width estimation keeps the right pill snug without a web font."""
+    rank = r.get("rank")
+    rank_txt = f"#{rank}" if isinstance(rank, int) else "#—"
+    delta = r.get("rank_delta")
+    if isinstance(delta, int) and delta > 0:
+        rank_txt = f"{rank_txt} ▲{delta}"
+    label = "Agent Velocity"
+    name = r.get("name", "") or r.get("repo", "")
+    # ~6px per char @ 11px DM-Mono-ish; +pad. Stable, no font metrics needed.
+    lw = len(label) * 6 + 18
+    rw = len(rank_txt) * 6 + 18
+    total = lw + rw
+    title = f"Agent Velocity — {_esc(name)} ranked {rank_txt}"
+    # unique gradient id per badge — guards against id collision if multiple badges
+    # are ever inlined together on a third-party page (img-embeds are already isolated)
+    gid = f"av{slugify(r.get('repo','') or name) or 'badge'}"
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{total}" height="20" '
+        f'role="img" aria-label="{title}">'
+        f'<title>{title}</title>'
+        f'<linearGradient id="{gid}" x2="0" y2="100%">'
+        f'<stop offset="0" stop-color="#fff" stop-opacity=".12"/>'
+        f'<stop offset="1" stop-opacity=".12"/></linearGradient>'
+        f'<rect rx="3" width="{total}" height="20" fill="#1b1622"/>'
+        f'<rect rx="3" x="{lw}" width="{rw}" height="20" fill="#ff4324"/>'
+        f'<rect rx="3" width="{total}" height="20" fill="url(#{gid})"/>'
+        f'<g fill="#fff" text-anchor="middle" '
+        f'font-family="Verdana,DejaVu Sans,Geneva,sans-serif" font-size="11">'
+        f'<text x="{lw/2:.0f}" y="14">{label}</text>'
+        f'<text x="{lw + rw/2:.0f}" y="14" font-weight="bold">{_esc(rank_txt)}</text>'
+        f'</g></svg>'
+    )
+
+
+def generate_badges(data: dict) -> int:
+    """Write a static /badge/<slug>.svg per repo (mirrors detail-page generation).
+    Static-deployable: no serverless needed; the daily build refreshes each badge."""
+    repos = data.get("repos", [])
+    b_dir = os.path.join(HERE, "badge")
+    os.makedirs(b_dir, exist_ok=True)
+    written = 0
+    for r in repos:
+        slug = repo_slug(r)
+        with open(os.path.join(b_dir, f"{slug}.svg"), "w") as f:
+            f.write(_badge_svg(r))
+        written += 1
+    print(f"  generated {written} rank badges in /badge/", file=sys.stderr)
+    return written
+
+
+def generate_feed(data: dict) -> None:
+    """Write feed.json — a small, documented, stable-schema public API subset of
+    the board (read-only data already public on the page; no secrets)."""
+    repos = sorted(data.get("repos", []), key=lambda x: x.get("rank", 999))
+    feed = {
+        "$schema_version": "1",
+        "generator": "Agent Velocity (Kymata Labs)",
+        "generated_at": data.get("generated_at"),
+        "site": SITE,
+        "docs": f"{SITE}/#how",
+        "license": "Data derived from the public GitHub REST API; attribution to Agent Velocity (kymatalabs.com) appreciated.",
+        "count": len(repos),
+        "repos": [
+            {
+                "rank": r.get("rank"),
+                "name": r.get("name"),
+                "owner": r.get("owner"),
+                "category": r.get("category"),
+                "momentum": r.get("momentum"),
+                "stars": r.get("stars"),
+                "rank_delta": r.get("rank_delta"),
+                "url": f"{SITE}/a/{repo_slug(r)}/",
+                "badge": f"{SITE}/badge/{repo_slug(r)}.svg",
+            }
+            for r in repos
+        ],
+        "movers": data.get("movers", []),
+    }
+    with open(os.path.join(HERE, "feed.json"), "w") as f:
+        json.dump(feed, f, indent=2)
+    print(f"  wrote feed.json: {len(repos)} repos", file=sys.stderr)
+
+
 def _months_ago_label(i: int, n: int) -> str:
     """Label for bucket i (0=oldest) in an n-bucket series of 30-day windows."""
     back = n - 1 - i
@@ -462,6 +549,11 @@ def _detail_html(r: dict, generated_at: str | None, all_repos: list | None = Non
     if home:
         out_links += f'<a class="btn" href="{_esc(home)}" target="_blank" rel="noopener">Homepage ↗</a>'
 
+    # embeddable rank badge — the viral loop (repos display their rank, link back here)
+    badge_url = f"{SITE}/badge/{slug}.svg"
+    embed_md = f"[![Agent Velocity rank]({badge_url})]({url})"
+    embed_html = f'<a href="{url}"><img src="{badge_url}" alt="Agent Velocity rank"></a>'
+
     ld = {
         "@context": "https://schema.org",
         "@graph": [
@@ -607,9 +699,21 @@ def _detail_html(r: dict, generated_at: str | None, all_repos: list | None = Non
   </section>
 
   <section class="d-section">
+    <h2>📛 Embed this badge</h2>
+    <p class="sublabel">Show your live Agent Velocity rank in your README — it updates daily and links back here.</p>
+    <p style="margin-top:14px"><img src="{badge_url}" alt="Agent Velocity rank badge for {_esc(name)}" style="vertical-align:middle"></p>
+    <div class="embed-snippets" style="margin-top:14px">
+      <label class="sublabel" style="display:block;margin-bottom:6px">Markdown</label>
+      <pre class="embed-code" style="overflow-x:auto;padding:12px;border-radius:8px;background:rgba(127,127,127,.10);font-family:'DM Mono',ui-monospace,monospace;font-size:13px"><code>{_esc(embed_md)}</code></pre>
+      <label class="sublabel" style="display:block;margin:14px 0 6px">HTML</label>
+      <pre class="embed-code" style="overflow-x:auto;padding:12px;border-radius:8px;background:rgba(127,127,127,.10);font-family:'DM Mono',ui-monospace,monospace;font-size:13px"><code>{_esc(embed_html)}</code></pre>
+    </div>
+  </section>
+
+  <section class="d-section">
     <h2>Links</h2>
     <div class="d-actions" style="margin-top:18px">{out_links}<a class="btn" href="/">← Back to the board</a></div>
-    <p class="sublabel" style="margin-top:18px">Recomputed {_esc(recomputed)} · scored from public-repo GitHub activity. Velocity = commit cadence (55%) + release recency (25%) + 6-month trend (20%).</p>
+    <p class="sublabel" style="margin-top:18px">Recomputed {_esc(recomputed)} · scored from public-repo GitHub activity. Velocity = commit cadence (55%) + release recency (25%) + 6-month trend (20%). <a class="inl" href="/feed.json">JSON API ↗</a></p>
   </section>
 </div></main>
 {_footer_html()}
@@ -668,7 +772,9 @@ def generate_details(data: dict) -> int:
         written += 1
     _write_sitemap(slugs)
     _write_llms(data)
-    print(f"  generated {written} detail pages + sitemap + llms.txt", file=sys.stderr)
+    generate_badges(data)
+    generate_feed(data)
+    print(f"  generated {written} detail pages + sitemap + llms.txt + feed.json + badges", file=sys.stderr)
     return written
 
 
