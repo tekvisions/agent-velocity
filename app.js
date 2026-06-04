@@ -53,13 +53,23 @@
   }
   function m(v,l,num){return'<div class="m"><b'+(num?' data-count="'+num+'"':'')+'>'+esc(v)+'</b><span>'+esc(l)+'</span></div>';}
 
+  /* position movement vs the prior daily run: ▲N climbed, ▼N slipped, → held, • new.
+     rank_delta>0 means a smaller (better) rank number — i.e. climbed the board. */
+  function moveBadge(r){
+    var d=r.rank_delta;
+    if(d==null) return '';  /* no prior history yet — show nothing (fills in daily) */
+    if(d>0) return '<span class="mv up" title="Climbed '+d+' since the prior run">▲'+d+'</span>';
+    if(d<0) return '<span class="mv dn" title="Slipped '+Math.abs(d)+' since the prior run">▼'+Math.abs(d)+'</span>';
+    return '<span class="mv flat" title="Held position">→</span>';
+  }
+
   function rowsFor(list){
     return list.map(function(r){
       var rel=r.last_release?'<div class="rel" title="Latest stable release">'+esc(r.last_release)+' · '+relDate(r.last_release_at)+'</div>':'';
       var v=r.recent4w_commits>=3000?"3000+":r.recent4w_commits;
       var p=posture(r);
       return '<a class="lrow" href="'+esc(detailUrl(r))+'" data-slug="'+esc(slugify(r.owner+"-"+r.name))+'" data-posture="'+p.k+'" aria-label="'+esc(r.name)+', rank '+r.rank+', velocity '+r.momentum+', '+p.label+'">'
-        +'<span class="lrank '+(r.rank<=3?"t"+r.rank:"")+'">'+r.rank+'</span>'
+        +'<span class="lrank '+(r.rank<=3?"t"+r.rank:"")+'">'+r.rank+moveBadge(r)+'</span>'
         +'<div class="lname"><h3>'+hi(r.name)+' <span class="owner">'+hi(r.owner)+'</span> <span class="cat">'+esc(r.category)+'</span></h3>'
           +'<p>'+hi(r.blurb)+'</p>'+rel+'</div>'
         +'<div class="vel"><div class="bar" data-w="'+r.momentum+'"><i style="width:0%"></i></div><div class="v"><b>'+r.momentum+'</b><span>'+v+' commits/mo</span></div></div>'
@@ -278,6 +288,10 @@
         +'<p>'+esc(r.blurb)+'</p></a>';
     }).join("");
 
+    // movers strip — biggest climbers since the prior run (rank_delta), or top
+    // commit-surge repos on day one before position history exists.
+    renderMovers(data.movers||[]);
+
     var cats=["All"].concat(data.categories||[]);
     D.getElementById("filters").innerHTML=cats.map(function(c,i){
       var n=c==="All"?ALL.length:ALL.filter(function(r){return r.category===c;}).length;
@@ -296,6 +310,24 @@
     requestAnimationFrame(function(){requestAnimationFrame(function(){
       D.querySelectorAll(".podmeter i").forEach(function(i){var w=i.style.width;i.style.width="0";i.getBoundingClientRect();i.style.transition="width .9s cubic-bezier(.2,.7,.2,1)";i.style.width=w;});
     });});
+  }
+
+  /* movers strip: horizontally-scrollable chips linking to detail pages. Each shows
+     the position climb (▲N) when tracked, else the commit surge (+N commits/mo). */
+  function renderMovers(movers){
+    var el=D.getElementById("movers"); if(!el) return;
+    if(!movers.length){ el.hidden=true; return; }
+    var chips=movers.map(function(m,i){
+      var climbed=(typeof m.rank_delta==="number" && m.rank_delta>0);
+      var tag=climbed
+        ? '<span class="mv up">▲'+m.rank_delta+'</span>'
+        : '<span class="mv up">+'+(m.commit_delta||0)+'</span>';
+      var sub=climbed?("now #"+m.rank):((m.commit_delta||0)+" commits/mo");
+      return '<a class="mover" href="/a/'+esc(slugify(m.owner+"-"+m.name))+'/" style="--d:'+(i*50)+'ms">'
+        +tag+'<span class="mvn">'+esc(m.name)+'</span><span class="mvs">'+esc(sub)+'</span></a>';
+    }).join("");
+    el.innerHTML='<span class="movers-l">Movers</span><div class="movers-track">'+chips+'</div>';
+    el.hidden=false;
   }
 
   /* meta cell that count-ups: keep the final display string, expose the numeric target */

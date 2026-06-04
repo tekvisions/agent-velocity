@@ -425,6 +425,36 @@ def _detail_html(r: dict, generated_at: str | None, all_repos: list | None = Non
                            if since else "history fills in as the board runs daily")
         star_chart = ""
 
+    # race-position movement: the climbed/slipped indicator + a rank-over-time curve.
+    # The sparkline is INVERTED (rank 1 = top of the chart) so "up = climbing".
+    rank_delta = r.get("rank_delta")
+    rhist = r.get("rank_history") or []
+    if isinstance(rank_delta, int) and rank_delta > 0:
+        move_badge = f'<span class="d-move up" title="Climbed {rank_delta} since prior run">▲ {rank_delta}</span>'
+        move_word = f"climbed {rank_delta} position{'s' if rank_delta != 1 else ''}"
+    elif isinstance(rank_delta, int) and rank_delta < 0:
+        move_badge = f'<span class="d-move dn" title="Slipped {abs(rank_delta)} since prior run">▼ {abs(rank_delta)}</span>'
+        move_word = f"slipped {abs(rank_delta)} position{'s' if abs(rank_delta) != 1 else ''}"
+    elif isinstance(rank_delta, int):
+        move_badge = '<span class="d-move flat" title="Held position">→</span>'
+        move_word = "held position"
+    else:
+        move_badge = '<span class="d-move new" title="New to the tracked board">NEW</span>'
+        move_word = "new to the board"
+    peak = r.get("peak_rank", rank)
+    if len(rhist) >= 2:
+        # invert so a climb reads as an upward line. Use the series' own worst rank as
+        # the baseline (self-contained — no dependency on an outer `total`): worst→0,
+        # best→largest, so the polyline rises when the repo climbs.
+        _ranks = [int(p.get("rank", rank) or rank) for p in rhist]
+        _worst = max(_ranks)
+        rank_series = [max(1, (_worst + 1) - rv) for rv in _ranks]
+        rank_chart = f'<div class="d-spark mini">{_spark_svg(rank_series, 720, 90)}</div>'
+        rank_note = f"position over the last {len(rhist)} days tracked · best: #{peak}"
+    else:
+        rank_chart = ""
+        rank_note = "position movement fills in as the board runs daily"
+
     # fork ratio (engagement signal) — forks per 1k stars
     fork_ratio = f"{forks/stars*1000:.0f}" if stars else "—"
 
@@ -503,7 +533,7 @@ def _detail_html(r: dict, generated_at: str | None, all_repos: list | None = Non
   <div class="d-rankline">
     <div class="d-rank {rclass}"><span class="hash">#</span>{rank}</div>
     <div class="d-titlewrap">
-      <h1>{_esc(name)}</h1>
+      <h1>{_esc(name)} {move_badge}</h1>
       <div class="d-owner">{_esc(owner)} · <span class="d-cat">{_esc(cat)}</span> · <span class="d-pos {pos['k']}">{pos['icon']} {_esc(pos['label'])}</span></div>
     </div>
   </div>
@@ -535,6 +565,17 @@ def _detail_html(r: dict, generated_at: str | None, all_repos: list | None = Non
       <div class="cmp-arrow {pos['k']}">{pos['icon']}</div>
       <div class="cmp"><span class="cmp-l">Prior 4 weeks</span><b class="muted">{p4:,}</b></div>
       <div class="cmp-verdict {pos['k']}">{_esc(pos['label'])}{(' · ' + ('+' if delta>=0 else '−') + str(abs(delta)) + ' commits') if p4 or r4 else ''}</div>
+    </div>
+  </section>
+
+  <section class="d-section">
+    <h2>Race position over time</h2>
+    <p class="sublabel">Where {_esc(name)} sits on the board, tracked daily — {move_word} since the prior run. {rank_note}.</p>
+    {rank_chart}
+    <div class="d-grid" style="margin-top:22px">
+      <div class="d-stat hot"><b>#{rank}</b><span>Current rank</span></div>
+      <div class="d-stat"><b>#{peak}</b><span>Best rank</span></div>
+      <div class="d-stat"><b>{move_badge}</b><span>Since prior run</span></div>
     </div>
   </section>
 
@@ -679,14 +720,18 @@ def _write_llms(data: dict) -> None:
 
 def main() -> int:
     cfg = json.load(open(os.path.join(HERE, "repos.json")))
-    # read prior data.json to extend the star history series
+    # read prior data.json to extend the star history series AND the rank/velocity
+    # movement series (so the board can show ▲/▼ position change over time — the
+    # "race" narrative — exactly the way stars_history seeds the star sparkline).
     prior_stars = {}
+    prior_rankh = {}
     out_path = os.path.join(HERE, "data.json")
     if os.path.exists(out_path):
         try:
             prev = json.load(open(out_path))
             for r in prev.get("repos", []):
                 prior_stars[r["repo"]] = r.get("stars_history", [])
+                prior_rankh[r["repo"]] = r.get("rank_history", [])
         except Exception:
             pass
 
@@ -756,6 +801,45 @@ def main() -> int:
     items.sort(key=lambda x: x["momentum"], reverse=True)
     for i, it in enumerate(items):
         it["rank"] = i + 1
+
+    # ── movement tracking ─────────────────────────────────────────────────────
+    # Append today's (rank, momentum) to each repo's rank_history (capped 90 days),
+    # then derive position movement vs the most recent PRIOR day. rank_delta > 0
+    # means the repo CLIMBED (smaller rank number is better). On day one there is no
+    # prior, so deltas are None and the UI shows a "new" / no-change state — the
+    # series fills in as the board runs daily (same cold-start as stars_history).
+    for it in items:
+        rh = list(prior_rankh.get(it["repo"], []))
+        # only PRIOR points with a real int rank are comparable (a malformed/None rank
+        # in the persisted history must never crash the daily cron build).
+        prior_pts = [p for p in rh if p.get("date") != today and isinstance(p.get("rank"), int)]
+        if not rh or rh[-1].get("date") != today:
+            rh.append({"date": today, "rank": it["rank"], "momentum": it["momentum"]})
+        rh = rh[-90:]
+        it["rank_history"] = rh
+        if prior_pts:
+            prev_rank = prior_pts[-1].get("rank")
+            it["rank_prev"] = prev_rank
+            it["rank_delta"] = prev_rank - it["rank"]   # prior_pts are int-rank only
+            it["peak_rank"] = min([p["rank"] for p in prior_pts] + [it["rank"]])
+            it["tracked_days"] = len(prior_pts) + 1
+        else:
+            it["rank_prev"] = None
+            it["rank_delta"] = None       # None == new/untracked (distinct from 0 == held)
+            it["peak_rank"] = it["rank"]
+            it["tracked_days"] = 1
+
+    # biggest climbers over the tracked window — the "Movers" strip. Falls back to
+    # commit_delta (always present) so the strip is populated on day one too.
+    # commit_delta is always int (recent4-prior4), but default-guard the sort keys so a
+    # malformed record can never crash the daily cron build (production blast radius).
+    climbers = [x for x in items if isinstance(x.get("rank_delta"), int) and x["rank_delta"] > 0]
+    movers = sorted(climbers, key=lambda x: (x["rank_delta"], int(x.get("commit_delta") or 0)),
+                    reverse=True)[:5]
+    if not movers:
+        movers = sorted([x for x in items if int(x.get("commit_delta") or 0) > 0],
+                        key=lambda x: int(x.get("commit_delta") or 0), reverse=True)[:5]
+
     trending = sorted([x for x in items if x["commit_delta"] > 0],
                       key=lambda x: x["commit_delta"], reverse=True)[:3]
 
@@ -765,6 +849,10 @@ def main() -> int:
         "repo_count": len(items),
         "categories": cfg["categories"],
         "trending": [t["repo"] for t in trending],
+        "movers": [{"repo": mvr["repo"], "name": mvr["name"], "owner": mvr["owner"],
+                    "rank": mvr["rank"], "rank_delta": mvr.get("rank_delta"),
+                    "momentum": mvr["momentum"], "commit_delta": mvr["commit_delta"]}
+                   for mvr in movers],
         "repos": items,
     }
     json.dump(data, open(out_path, "w"), indent=2)

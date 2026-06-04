@@ -313,3 +313,29 @@ footer a.inl:hover{border-color:var(--hot-2)}
   .cb-track{height:108px}
   .d-compare .cmp-verdict{margin-left:0;width:100%}
 }
+
+/* ── movement tracking: row badge, movers strip, detail badge ───────────────── */
+.lrank{display:inline-flex;flex-direction:column;align-items:center;gap:3px;line-height:.9}
+.mv{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.02em;font-style:normal;transform:skewX(6deg);white-space:nowrap;font-variant-numeric:tabular-nums}
+.mv.up{color:var(--hot-2)} .mv.dn{color:#9b8fa6} .mv.flat{color:var(--muted)} .mv.new{color:var(--hot-2);opacity:.7}
+@media (max-width:720px){.mv{font-size:9px}}
+
+.movers{display:flex;align-items:center;gap:14px;margin-top:30px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.movers-l{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--hot-2);flex:none;display:flex;align-items:center;gap:8px}
+.movers-l::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--hot);box-shadow:0 0 9px var(--hot);animation:rev 1.2s infinite}
+.movers-track{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px}
+.movers-track::-webkit-scrollbar{display:none}
+.mover{flex:none;display:flex;align-items:center;gap:9px;border:1px solid var(--line);background:var(--panel);border-radius:3px;padding:9px 14px;text-decoration:none;color:var(--ink);transition:border-color .25s,transform .25s var(--ease);animation:moverin .5s var(--ease) both;animation-delay:var(--d,0ms)}
+.mover:hover{border-color:var(--hot);transform:translateY(-2px)}
+.mover .mv{font-size:13px;font-weight:600;transform:none}
+.mover .mvn{font-family:var(--sans);font-size:13.5px;font-weight:600;white-space:nowrap}
+.mover .mvs{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.04em;white-space:nowrap}
+@keyframes moverin{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.mover{animation:none}.movers-l::before{animation:none}}
+
+.d-move{font-family:var(--mono);font-size:.42em;font-weight:600;letter-spacing:.02em;vertical-align:middle;padding:3px 8px;border-radius:3px;font-style:normal;transform:skewX(6deg);display:inline-block;border:1px solid transparent}
+.d-move.up{color:var(--hot-2);border-color:color-mix(in srgb,var(--hot-2) 40%,transparent);background:color-mix(in srgb,var(--hot-2) 9%,transparent)}
+.d-move.dn{color:#9b8fa6;border-color:color-mix(in srgb,#9b8fa6 32%,transparent)}
+.d-move.flat{color:var(--muted);border-color:var(--line-2)}
+.d-move.new{color:var(--hot-2);border-color:color-mix(in srgb,var(--hot-2) 40%,transparent);letter-spacing:.08em}
+.d-stat .d-move{font-size:18px;padding:4px 12px}
