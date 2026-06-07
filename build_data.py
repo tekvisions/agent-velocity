@@ -272,6 +272,59 @@ def generate_feed(data: dict) -> None:
     print(f"  wrote feed.json: {len(repos)} repos", file=sys.stderr)
 
 
+def generate_rss(data: dict) -> None:
+    """Write rss.xml — the current velocity board (top 30) as a subscribable RSS 2.0
+    feed. Stable per-entry guids (detail URLs); pubDate = the board's daily refresh.
+    Additive, read-only public data (PRD O7)."""
+    from email.utils import format_datetime
+    repos = sorted(data.get("repos", []), key=lambda x: x.get("rank", 999))[:30]
+    gen_iso = data.get("generated_at")
+    try:
+        dt = datetime.fromisoformat(gen_iso) if gen_iso else datetime.now(timezone.utc)
+    except (TypeError, ValueError):
+        dt = datetime.now(timezone.utc)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    rfc = format_datetime(dt)
+    title = "Agent Velocity — the open-source coding-agent race"
+    desc = ("The live leaderboard of open-source coding agents — ranked by real GitHub "
+            "shipping velocity, recomputed daily by autonomous agents.")
+    items = []
+    for r in repos:
+        url = f"{SITE}/a/{repo_slug(r)}/"
+        rank, mom, cat = r.get("rank"), r.get("momentum"), r.get("category")
+        rd = r.get("rank_delta")
+        move = f" ▲{rd}" if isinstance(rd, int) and rd > 0 else (
+               f" ▼{abs(rd)}" if isinstance(rd, int) and rd < 0 else "")
+        ttl = f"#{rank} {r.get('name')} — velocity {mom}"
+        body = f"#{rank} · velocity {mom}/100 · {cat}{move} · {r.get('stars')} stars"
+        items.append(
+            "    <item>\n"
+            f"      <title>{_esc(ttl)}</title>\n"
+            f"      <link>{_esc(url)}</link>\n"
+            f'      <guid isPermaLink="true">{_esc(url)}</guid>\n'
+            f"      <category>{_esc(cat)}</category>\n"
+            f"      <description>{_esc(body)}</description>\n"
+            f"      <pubDate>{rfc}</pubDate>\n"
+            "    </item>")
+    xml = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n'
+        "  <channel>\n"
+        f"    <title>{_esc(title)}</title>\n"
+        f"    <link>{SITE}</link>\n"
+        f'    <atom:link href="{SITE}/rss.xml" rel="self" type="application/rss+xml"/>\n'
+        f"    <description>{_esc(desc)}</description>\n"
+        "    <language>en</language>\n"
+        f"    <lastBuildDate>{rfc}</lastBuildDate>\n"
+        "    <generator>Kymata Labs</generator>\n"
+        + "\n".join(items) + "\n"
+        "  </channel>\n</rss>\n")
+    with open(os.path.join(HERE, "rss.xml"), "w") as f:
+        f.write(xml)
+    print(f"  wrote rss.xml: {len(items)} items", file=sys.stderr)
+
+
 def _months_ago_label(i: int, n: int) -> str:
     """Label for bucket i (0=oldest) in an n-bucket series of 30-day windows."""
     back = n - 1 - i
@@ -774,7 +827,8 @@ def generate_details(data: dict) -> int:
     _write_llms(data)
     generate_badges(data)
     generate_feed(data)
-    print(f"  generated {written} detail pages + sitemap + llms.txt + feed.json + badges", file=sys.stderr)
+    generate_rss(data)
+    print(f"  generated {written} detail pages + sitemap + llms.txt + feed.json + rss.xml + badges", file=sys.stderr)
     return written
 
 
