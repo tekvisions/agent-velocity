@@ -717,12 +717,12 @@ def _detail_html(r: dict, generated_at: str | None, all_repos: list | None = Non
 <meta property="og:title" content="{_esc(name)} — velocity {mom} · #{rank} in the coding-agent race">
 <meta property="og:description" content="{_esc(desc)}">
 <meta property="og:type" content="article">
-<meta property="og:image" content="{SITE}/og.png">
+<meta property="og:image" content="{SITE}/og-20261030.png">
 <meta property="og:url" content="{url}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{_esc(name)} — velocity {mom} · #{rank} in the coding-agent race">
 <meta name="twitter:description" content="{_esc(desc)}">
-<meta name="twitter:image" content="{SITE}/og.png">
+<meta name="twitter:image" content="{SITE}/og-20261030.png">
 <meta name="theme-color" content="#0a0910">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
