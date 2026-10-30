@@ -356,7 +356,7 @@ def generate_rss(data: dict) -> None:
     rfc = format_datetime(dt)
     title = "Agent Velocity — the open-source coding-agent race"
     desc = ("The live leaderboard of open-source coding agents — ranked by real GitHub "
-            "shipping velocity, recomputed daily by autonomous agents.")
+            "shipping velocity, updated daily from public source signals.")
     items = []
     for r in repos:
         url = f"{SITE}/a/{repo_slug(r)}/"
@@ -550,7 +550,7 @@ def _footer_html() -> str:
         '<footer><div class="wrap">'
         '<span class="mono" style="color:var(--hot-2)">How it\'s made</span>'
         '<h2>The race, scored by <em>shipping</em> — not hype.</h2>'
-        '<p>An AI agent pulls live GitHub signals for every coding agent daily, scores velocity as commit cadence (55%) + release recency (25%) + 6-month trend (20%), and redeploys this board. Built and run by the same agent stack as '
+        '<p>Daily public GitHub signals score each coding agent by commit cadence (55%) + release recency (25%) + 6-month trend (20%). Published by '
         '<a class="inl" href="https://kymatalabs.com/" target="_blank" rel="noopener">Kymata Labs</a>.</p>'
         '<div class="foot-row">'
         '<a href="/">← All agents</a>'
@@ -924,7 +924,7 @@ def _write_llms(data: dict) -> None:
         "",
         "## Source & cadence",
         "- Data source: the public GitHub REST API (commits, releases, stars, forks, issues). Every number traces to a real API response — nothing is fabricated.",
-        "- Cadence: recomputed and redeployed **daily** by an autonomous agent (Kymata Labs agent stack).",
+        "- Cadence: recomputed **daily** from public GitHub signals.",
         "- Caveat: velocity reflects *public-repo* activity only; privately developed agents rank below their true pace.",
         "",
         "## Routes",
