@@ -11,7 +11,7 @@
   function fmtStars(n){return n>=1000?(n/1000).toFixed(n>=10000?0:1).replace(/\.0$/,"")+"k":String(n);}
   function fmtInt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,",");}
   function relDate(iso){if(!iso)return"recently";var d=(Date.now()-new Date(iso).getTime())/86400000;if(isNaN(d))return"recently";if(d<1)return"today";if(d<2)return"1d ago";if(d<30)return Math.round(d)+"d ago";if(d<365)return Math.round(d/30)+"mo ago";return Math.round(d/365)+"y ago";}
-  /* slug = lowercase url-safe owner-name (must match build_data.py slugify) */
+  /* Stable catalog URL slug from the public repository name. */
   function slugify(s){return String(s==null?"":s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");}
   function detailUrl(r){return "/a/"+slugify(r.owner+"-"+r.name)+"/";}
 
