@@ -336,6 +336,6 @@
   }
 
   fetch("data.json",{cache:"no-store"}).then(function(r){return r.json();}).then(build).catch(function(e){
-    D.getElementById("lboard").innerHTML='<div class="loading">Could not load. '+esc(e.message||e)+'</div>';
+    D.getElementById("lboard").innerHTML='<div class="loading">Could not load the index. Refresh to retry.</div>';
   });
 })();
