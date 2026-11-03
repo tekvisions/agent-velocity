@@ -27,7 +27,7 @@
   }
   function trend(r){var p=posture(r);var amt=Math.abs(r.commit_delta||0);
     var t=p.k==="flat"?"steady":(amt+"/mo");
-    return '<span class="t '+(p.k==="surge"||p.k==="up"?"up":p.k==="flat"?"flat":"dn")+'" title="'+p.label+' — '+(r.commit_delta>0?"+":"")+(r.commit_delta||0)+' commits vs prior 4 weeks">'+p.icon+' '+t+'</span>';}
+    return '<span class="t '+(p.k==="surge"||p.k==="up"?"up":p.k==="flat"?"flat":"dn")+'" title="'+p.label+' — '+(r.commit_delta>0?"+":"")+(r.commit_delta||0)+' commits vs prior 30 days">'+p.icon+' '+t+'</span>';}
 
   /* highlight matched query inside an escaped string */
   function hi(text){
@@ -179,7 +179,7 @@
     }
     D.querySelectorAll(".bhead .sortable").forEach(function(h){
       var k=h.getAttribute("data-sort"), active=k===state.sortKey;
-      h.setAttribute("aria-sort", active?(state.sortDir==="asc"?"ascending":"descending"):"none");
+      h.setAttribute("data-sort-direction", active?(state.sortDir==="asc"?"ascending":"descending"):"none");
       h.classList.toggle("on",active);
       var ar=h.querySelector(".arrow"); if(ar)ar.textContent=(active&&state.sortDir==="asc")?"▲":"▼";
     });
@@ -193,7 +193,6 @@
   function wireSort(){
     D.querySelectorAll(".bhead .sortable").forEach(function(h){
       h.addEventListener("click",function(){clickSort(h);});
-      h.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();clickSort(h);}});
     });
     applySortUI();
   }
@@ -236,19 +235,10 @@
   }
 
   /* count-up for the hero meta numbers (initial paint only) */
-  function countUp(){
-    if(RM){ D.querySelectorAll("[data-count]").forEach(function(el){el.textContent=el.getAttribute("data-orig")||el.textContent;}); return; }
-    D.querySelectorAll("[data-count]").forEach(function(el){
-      var target=+el.getAttribute("data-count"); if(!isFinite(target)){return;}
-      var suffix=el.getAttribute("data-suffix")||"", dur=900, t0=null;
-      function step(ts){ if(!t0)t0=ts; var p=Math.min((ts-t0)/dur,1); var e=1-Math.pow(1-p,3);
-        var val=Math.round(target*e); el.textContent=(val>=1000?fmtStars(val):val)+suffix;
-        if(p<1)requestAnimationFrame(step); else el.textContent=el.getAttribute("data-orig"); }
-      requestAnimationFrame(step);
-    });
-  }
+  function countUp(){}
 
   function injectItemList(list){
+    if (document.getElementById("catalog-schema")) return;
     var el=D.getElementById("itemlist-ld"); if(!el)return;
     var base="https://agentvelocity.kymatalabs.com";
     var ld={"@context":"https://schema.org","@type":"ItemList",
@@ -273,8 +263,8 @@
       +mCount(fmtStars(totalStars), totalStars, "Combined stars")
       +mCount(topV, topV, "Top velocity")
       +m(mover?mover.name:"—","Biggest mover");
-    D.getElementById("liveline").textContent="The coding-agent race · recomputed "+relDate(data.generated_at);
-    var fg=D.getElementById("footgen");if(fg)fg.textContent="Recomputed "+relDate(data.generated_at);
+    D.getElementById("liveline").textContent="The coding-agent race · recomputed "+(String(data.generated_at||"unknown").slice(0,10)+" UTC");
+    var fg=D.getElementById("footgen");if(fg)fg.textContent="Recomputed "+(String(data.generated_at||"unknown").slice(0,10)+" UTC");
 
     // podium top 3 — internal links to detail pages
     var medals=["①","②","③"], pclass=["p1","p2","p3"];
@@ -335,7 +325,8 @@
     return '<div class="m"><b data-count="'+num+'" data-orig="'+esc(display)+'">'+esc(display)+'</b><span>'+esc(label)+'</span></div>';
   }
 
-  fetch("data.json",{cache:"no-store"}).then(function(r){return r.json();}).then(build).catch(function(e){
-    D.getElementById("lboard").innerHTML='<div class="loading">Could not load the index. Refresh to retry.</div>';
+  fetch("data.json",{cache:"no-store"}).then(function(r){return r.json();}).then(build).then(function(){if(window.dispatchEvent&&window.Event)window.dispatchEvent(new window.Event("catalog:ready"));}).catch(function(e){
+    if(window.dispatchEvent&&window.Event)window.dispatchEvent(new window.Event("catalog:error"));
+    D.getElementById("resultcount").textContent="Could not load fresh data. Showing the published snapshot. Refresh to retry.";
   });
 })();

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Velocity — the open-source coding-agent race</title>
+<meta name="description" content="A leaderboard of selected open-source coding agents with GitHub activity, releases and documented velocity scoring. Compare dated snapshots and methodology.">
+<meta property="og:title" content="Agent Velocity — the coding-agent race, live">
+<meta property="og:description" content="Who's shipping fastest? Open-source coding agents ranked by real GitHub velocity, updated daily.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://agentvelocity.kymatalabs.com/og-20261030.png">
+<meta property="og:url" content="https://agentvelocity.kymatalabs.com/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agent Velocity — the coding-agent race, live">
+<meta name="twitter:description" content="Who's shipping fastest? Open-source coding agents ranked by real GitHub velocity, updated daily.">
+<meta name="twitter:image" content="https://agentvelocity.kymatalabs.com/og-20261030.png">
+<meta name="theme-color" content="#0a0910">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@300;400;600;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="canonical" href="https://agentvelocity.kymatalabs.com/">
+<link rel="icon" href="favicon.svg">
+<link rel="alternate" type="application/rss+xml" title="Agent Velocity — the open-source coding-agent race" href="/rss.xml">
+<link rel="stylesheet" href="style.css">
+<script>
+/* no-flash theme: localStorage('theme') → else prefers-color-scheme → else dark */
+(function(){try{var t=localStorage.getItem("theme");if(!t){t=(window.matchMedia&&window.matchMedia("(prefers-color-scheme:light)").matches)?"light":"dark";}document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme="dark";}})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://agentvelocity.kymatalabs.com/#website",
+      "url": "https://agentvelocity.kymatalabs.com/",
+      "name": "Agent Velocity",
+      "description": "A live leaderboard ranking open-source coding agents by shipping velocity — commit cadence, release recency, and change versus the prior 30-day window.",
+      "inLanguage": "en",
+      "publisher": { "@id": "https://kymatalabs.com/#org" }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://kymatalabs.com/#org",
+      "name": "Kymata Labs",
+      "url": "https://kymatalabs.com/"
+    }
+  ]
+}
+</script>
+
+
+<!-- catalog:schema:start -->
+<!-- catalog:schema:end -->
+<link rel="alternate" type="application/json" href="/data.json" title="Current catalog snapshot">
+<script defer src="/guidance.js"></script>
+</head>
+<body>
+<div class="geo-kstrip"><div class="wrap">
+  <a href="https://www.kymatalabs.com" target="_blank" rel="noopener"><span class="d"></span>Kymata Labs</a>
+  <span class="s">/</span>
+  <a href="https://indexes.kymatalabs.com" target="_blank" rel="noopener">The Living Indexes</a>
+
+</div></div>
+
+<canvas id="streaks" aria-hidden="true"></canvas>
+
+<nav id="nav"><div class="wrap nav-in">
+  <a class="brand" href="/">Agent Velocity <span class="by">// Kymata Labs</span></a>
+  <div class="nav-links">
+    <a href="#board">The board</a>
+    <a href="#how" class="hidem">How it's made</a>
+    <a href="https://kymatalabs.com/" class="hidem">Kymata Labs ↗</a>
+    <button class="themetog" id="themetog" type="button" aria-label="Toggle light/dark theme" title="Toggle theme">
+      <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2 12h2.5M19.5 12H22M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+    </button>
+  </div>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow"><span class="dot"></span><span id="liveline">The coding-agent race · recomputed on successful refresh</span></div>
+  <h1>Who's <em>shipping fastest</em> in the coding-agent race?</h1>
+  <p class="lede">A live leaderboard of open-source coding agents — ranked by real GitHub shipping velocity: commit cadence, release recency, and change versus the prior 30-day window. Not by stars. By who's actually moving.</p>
+  <div class="meta-row" id="metarow"></div>
+  <div class="podium" id="podium"></div>
+</div></header>
+
+<section id="board"><div class="wrap">
+  <div class="movers" id="movers" hidden aria-label="Biggest movers on the board"></div>
+  <div class="controls">
+    <div class="filters" id="filters" role="group" aria-label="Filter agents by category"></div>
+    <div class="searchwrap">
+      <svg class="s-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="search" type="search" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Filter the grid…" aria-label="Search agents by name, category, or language">
+      <button id="searchclear" type="button" class="s-clear" aria-label="Clear search" hidden>×</button>
+    </div>
+  </div>
+  <div class="sortbar">
+    <span class="sortnote" id="sortnote" role="status" aria-live="polite">Ranked by velocity ↓</span>
+    <span class="resultcount" id="resultcount" aria-live="polite"></span>
+  </div>
+  <div class="bhead" >
+    <span>#</span>
+    <button type="button" class="c-n sortable" data-sort="name" data-sort-direction="none">Agent <span class="arrow">▼</span></button>
+    <button type="button" class="c-v sortable" data-sort="momentum" data-sort-direction="descending">Velocity <span class="arrow">▼</span></button>
+    <button type="button" class="c-s sortable" data-sort="recent4w_commits" data-sort-direction="none">Commits · 6mo <span class="arrow">▼</span></button>
+    <button type="button" class="r sortable" data-sort="stars" data-sort-direction="none">Stars <span class="arrow">▼</span></button>
+  </div>
+  <div class="board" id="lboard" aria-live="polite"><!-- catalog:entries:start -->
+<!-- catalog:entries:end --></div><!-- catalog:pagination:start -->
+<!-- catalog:pagination:end -->
+</div></section>
+
+<!-- catalog:about:start -->
+<!-- catalog:about:end -->
+
+<aside data-portfolio-ad="after-content" aria-label="Advertisement" hidden></aside>
+<footer id="how"><div class="wrap">
+  <span class="mono" style="color:var(--hot-2)">How it's made</span>
+  <h2>The race, scored by <em>shipping</em> — not hype.</h2>
+  <p>Stars measure yesterday's popularity. Agent Velocity measures who's moving now: the index uses live GitHub signals for selected coding agents daily, scores velocity as commit cadence (55%) + release recency (25%) + change versus the prior 30-day window (20%), and refreshes this board. Published by <a class="inl" href="https://kymatalabs.com/" target="_blank" rel="noopener">Kymata Labs</a>.</p>
+  <p style="font-size:14px;color:var(--muted)"><em>One honest caveat: velocity reflects <strong style="color:var(--ink-soft);font-weight:500">public-repo</strong> commit activity. An agent developed privately, or whose open-source repo is mostly releases and issues, will rank below its true shipping pace. This board measures what's visible on GitHub.</em></p>
+  <div class="foot-row">
+    <span id="footgen">Recomputed daily</span>
+    <a href="/feed.json">/feed.json — public API</a>
+    <span>© 2026 Kymata Labs · Agent Velocity</span>
+    <a href="https://kymatalabs.com/">kymatalabs ↗</a>
+  </div>
+</div><p class="wrap"><a href="/privacy.html">Privacy and advertising</a> · <button type="button" data-ad-privacy hidden>Advertising privacy choices</button></p>
+</footer>
+
+<script>
+/* speed-streaks hero — horizontal light trails ripping left→right. Theme-aware. */
+(function(){
+  if(window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  if(window.matchMedia && window.matchMedia("(max-width:800px)").matches) return;
+  var cv=document.getElementById("streaks"); if(!cv) return;
+  var ctx=cv.getContext("2d"), W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,2), ps=[], raf;
+  /* streak palette + alpha multiplier per theme; re-read on toggle */
+  var THEME={
+    dark:{colors:["255,67,36","255,138,43","255,182,72"],comp:"lighter",aMul:1.0},
+    light:{colors:["232,53,26","217,101,26","204,120,30"],comp:"source-over",aMul:0.55}
+  };
+  function curTheme(){return document.documentElement.dataset.theme==="light"?THEME.light:THEME.dark;}
+  var TH=curTheme();
+  function size(){ W=cv.clientWidth; H=cv.clientHeight; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); build(); }
+  function mk(){ var sp=2.5+Math.random()*7; return {
+    x:-Math.random()*W, y:Math.random()*H, len:60+Math.random()*180, sp:sp,
+    w:Math.random()<0.2?1.8:0.8, c:TH.colors[(Math.random()*TH.colors.length)|0], a:0.10+Math.random()*0.35 }; }
+  function build(){ var n=Math.max(18,Math.min(46,Math.round(W/26))); ps=[]; for(var i=0;i<n;i++){var p=mk();p.x=Math.random()*W;ps.push(p);} }
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    ctx.globalCompositeOperation=TH.comp;
+    for(var i=0;i<ps.length;i++){
+      var p=ps[i]; p.x+=p.sp;
+      var a=(p.a*TH.aMul);
+      var g=ctx.createLinearGradient(p.x-p.len,p.y,p.x,p.y);
+      g.addColorStop(0,"rgba("+p.c+",0)"); g.addColorStop(1,"rgba("+p.c+","+a.toFixed(3)+")");
+      ctx.strokeStyle=g; ctx.lineWidth=p.w; ctx.beginPath(); ctx.moveTo(p.x-p.len,p.y); ctx.lineTo(p.x,p.y); ctx.stroke();
+      ctx.fillStyle="rgba("+p.c+","+Math.min(1,a+0.3).toFixed(3)+")"; ctx.fillRect(p.x-1,p.y-p.w/2,2,p.w);
+      if(p.x-p.len>W){ ps[i]=mk(); }
+    }
+    raf=requestAnimationFrame(frame);
+  }
+  /* re-read theme + rebuild streaks when toggled */
+  window.addEventListener("av:themechange",function(){ TH=curTheme(); build(); });
+  size(); window.addEventListener("resize", size);
+  document.addEventListener("visibilitychange", function(){ if(document.hidden){cancelAnimationFrame(raf);} else {raf=requestAnimationFrame(frame);} });
+  raf=requestAnimationFrame(frame);
+})();
+/* theme toggle — persists + notifies the canvas */
+(function(){
+  var btn=document.getElementById("themetog"); if(!btn) return;
+  btn.addEventListener("click",function(){
+    var next=document.documentElement.dataset.theme==="light"?"dark":"light";
+    document.documentElement.dataset.theme=next;
+    try{localStorage.setItem("theme",next);}catch(e){}
+    var tc=document.querySelector('meta[name="theme-color"]'); if(tc)tc.setAttribute("content",next==="light"?"#f6f3ef":"#0a0910");
+    window.dispatchEvent(new Event("av:themechange"));
+  });
+})();
+</script>
+<script src="app.js"></script>
+<script defer src="/advertising.js" data-host="agentvelocity.kymatalabs.com" data-approved="false" data-consent-ready="false" data-slot="6939405217"></script>
+</body>
+</html>

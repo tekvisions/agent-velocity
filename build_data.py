@@ -12,6 +12,7 @@ The `stars_history` is appended to on every run (the prior data.json is read
 back in), so the star sparkline builds a real day-over-day series over time.
 """
 from __future__ import annotations
+import html_json
 import json, os, re, subprocess, sys, time, urllib.request, urllib.error
 from datetime import datetime, timezone, timedelta
 
@@ -168,8 +169,8 @@ def release_cadence_days(full: str) -> float | None:
 
 def momentum(recent4: int, prior4: int, days_release: float | None) -> int:
     """Momentum 0-100 from real commit velocity + release recency + trend.
-    recent4 = commits in last 28d, prior4 = commits in the prior 28d."""
-    # activity: 400 commits / 28d ≈ very hot
+    recent4 = commits in last 30d, prior4 = commits in the prior 30d."""
+    # activity: 400 commits / 30d ≈ very hot
     act = min(recent4 / 400.0, 1.0)
     # release recency: <30d full, decays to 0 by 270d; no release → low floor
     if days_release is None:
@@ -453,7 +454,7 @@ def _score_rows(r: dict) -> str:
     c = _velocity_components(r)
     recent4, prior4 = c["recent4"], c["prior4"]
     # cadence detail
-    cad_detail = f"{recent4:,} commits in the last 4 weeks (saturates at 400)"
+    cad_detail = f"{recent4:,} commits in the last 30 days (saturates at 400)"
     # release detail
     if c["d_rel"] is None:
         rel_detail = "no stable GitHub release — scored at the floor"
@@ -465,7 +466,7 @@ def _score_rows(r: dict) -> str:
         diff = recent4 - prior4
         sign = "+" if diff >= 0 else "−"
         rel_pct = abs(diff) / prior4 * 100
-        tr_detail = f"{sign}{abs(diff):,} vs prior 4 weeks ({sign}{rel_pct:.0f}%)"
+        tr_detail = f"{sign}{abs(diff):,} vs prior 30 days ({sign}{rel_pct:.0f}%)"
     else:
         tr_detail = "no commits in the prior window to compare"
 
@@ -484,7 +485,7 @@ def _score_rows(r: dict) -> str:
     return (
         row("Commit cadence", 55, c["act"], c["act_pts"], cad_detail)
         + row("Release recency", 25, c["rel"], c["rel_pts"], rel_detail)
-        + row("6-month trend", 20, c["tr"], c["tr_pts"], tr_detail)
+        + row("change versus the prior 30-day window", 20, c["tr"], c["tr_pts"], tr_detail)
         + f'<div class="sc-total"><span>Velocity score</span><b>{mom} <span class="sc-of">/ 100</span></b></div>'
     )
 
@@ -550,7 +551,7 @@ def _footer_html() -> str:
         '<footer><div class="wrap">'
         '<span class="mono" style="color:var(--hot-2)">How it\'s made</span>'
         '<h2>The race, scored by <em>shipping</em> — not hype.</h2>'
-        '<p>Daily public GitHub signals score each coding agent by commit cadence (55%) + release recency (25%) + 6-month trend (20%). Published by '
+        '<p>Daily public GitHub signals score each coding agent by commit cadence (55%) + release recency (25%) + change versus the prior 30-day window (20%). Published by '
         '<a class="inl" href="https://kymatalabs.com/" target="_blank" rel="noopener">Kymata Labs</a>.</p>'
         '<div class="foot-row">'
         '<a href="/">← All agents</a>'
@@ -601,16 +602,16 @@ def _detail_html(r: dict, generated_at: str | None, all_repos: list | None = Non
     pos = _posture(r)
     title = f"{name} — velocity {mom} · #{rank} | Agent Velocity"
     desc = (f"{full}: shipping velocity {mom}/100, ranked #{rank} among open-source coding agents. "
-            f"{r4} commits in the last 4 weeks, {_fmt_stars(stars)} stars. {blurb}").strip()
+            f"{r4} commits in the last 30 days, {_fmt_stars(stars)} stars. {blurb}").strip()
     desc = re.sub(r"\s+", " ", desc)[:300]
 
     delta_sub = ""
     if delta > 3:
-        delta_sub = f'<div class="sub">▲ {delta} more than prior 4w</div>'
+        delta_sub = f'<div class="sub">▲ {delta} more than prior 30d</div>'
     elif delta < -3:
-        delta_sub = f'<div class="sub" style="color:var(--muted)">▼ {abs(delta)} fewer than prior 4w</div>'
+        delta_sub = f'<div class="sub" style="color:var(--muted)">▼ {abs(delta)} fewer than prior 30d</div>'
     else:
-        delta_sub = '<div class="sub" style="color:var(--muted)">→ steady vs prior 4w</div>'
+        delta_sub = '<div class="sub" style="color:var(--muted)">→ steady vs prior 30d</div>'
 
     monthly = r.get("monthly_commits") or []
     axis = '<div class="axis"><span>6 months ago</span><span>now</span></div>' if len(monthly) >= 2 else ""
@@ -694,7 +695,6 @@ def _detail_html(r: dict, generated_at: str | None, all_repos: list | None = Non
                 "url": url,
                 "codeRepository": gh_url,
                 "programmingLanguage": (lang if lang != "—" else None),
-                "author": {"@type": "Organization", "name": owner},
                 "sameAs": [u for u in [gh_url, home or None] if u],
             },
         ],
@@ -703,7 +703,7 @@ def _detail_html(r: dict, generated_at: str | None, all_repos: list | None = Non
     ssc = ld["@graph"][1]
     if ssc.get("programmingLanguage") is None:
         ssc.pop("programmingLanguage", None)
-    ld_json = json.dumps(ld, ensure_ascii=False)
+    ld_json = html_json.dumps(ld, ensure_ascii=False)
 
     recomputed = _rel_date(generated_at)
 
@@ -755,7 +755,7 @@ def _detail_html(r: dict, generated_at: str | None, all_repos: list | None = Non
 
   <div class="d-grid">
     <div class="d-stat hot"><b>{mom}</b><span>Velocity / 100</span><div class="sub">rank #{rank} of {total}</div></div>
-    <div class="d-stat"><b>{r4}</b><span>Commits · last 4w</span>{delta_sub}</div>
+    <div class="d-stat"><b>{r4}</b><span>Commits · last 30d</span>{delta_sub}</div>
     <div class="d-stat"><b>{_fmt_stars(stars)}</b><span>Stars</span></div>
     <div class="d-stat"><b>{_fmt_stars(forks)}</b><span>Forks</span></div>
     <div class="d-stat"><b>{_fmt_stars(issues)}</b><span>Open issues</span></div>
@@ -774,9 +774,9 @@ def _detail_html(r: dict, generated_at: str | None, all_repos: list | None = Non
     <div class="d-spark">{_spark_svg(monthly)}{axis}</div>
     {bars}
     <div class="d-compare">
-      <div class="cmp"><span class="cmp-l">Last 4 weeks</span><b>{r4:,}</b></div>
+      <div class="cmp"><span class="cmp-l">Last 30 days</span><b>{r4:,}</b></div>
       <div class="cmp-arrow {pos['k']}">{pos['icon']}</div>
-      <div class="cmp"><span class="cmp-l">Prior 4 weeks</span><b class="muted">{p4:,}</b></div>
+      <div class="cmp"><span class="cmp-l">Prior 30 days</span><b class="muted">{p4:,}</b></div>
       <div class="cmp-verdict {pos['k']}">{_esc(pos['label'])}{(' · ' + ('+' if delta>=0 else '−') + str(abs(delta)) + ' commits') if p4 or r4 else ''}</div>
     </div>
   </section>
@@ -834,7 +834,7 @@ def _detail_html(r: dict, generated_at: str | None, all_repos: list | None = Non
   <section class="d-section">
     <h2>Links</h2>
     <div class="d-actions" style="margin-top:18px">{out_links}<a class="btn" href="/">← Back to the board</a></div>
-    <p class="sublabel" style="margin-top:18px">Recomputed {_esc(recomputed)} · scored from public-repo GitHub activity. Velocity = commit cadence (55%) + release recency (25%) + 6-month trend (20%). <a class="inl" href="/feed.json">JSON API ↗</a></p>
+    <p class="sublabel" style="margin-top:18px">Recomputed {_esc(recomputed)} · scored from public-repo GitHub activity. Velocity = commit cadence (55%) + release recency (25%) + change versus the prior 30-day window (20%). <a class="inl" href="/feed.json">JSON API ↗</a></p>
   </section>
 </div></main>
 {_footer_html()}
@@ -920,7 +920,7 @@ def _write_llms(data: dict) -> None:
         "> A live leaderboard ranking open-source coding agents by real GitHub **shipping velocity** — not by stars.",
         "",
         "## What this is",
-        "Agent Velocity scores every tracked open-source coding agent on a 0-100 velocity metric computed from commit cadence (55%), release recency (25%), and 6-month commit trend (20%). It answers: who is actually shipping fastest in the coding-agent race?",
+        "Agent Velocity scores every tracked open-source coding agent on a 0-100 velocity metric computed from commit cadence (55%), release recency (25%), and change versus the prior 30-day window (20%). It answers: who is actually shipping fastest in the coding-agent race?",
         "",
         "## Source & cadence",
         "- Data source: the public GitHub REST API (commits, releases, stars, forks, issues). Every number traces to a real API response — nothing is fabricated.",

@@ -1,34 +1,38 @@
 # Agent Velocity
 
-> A live leaderboard ranking open-source coding agents by real GitHub **shipping velocity** — not by stars.
+> Agent Velocity: a source-backed catalog published by Kymata Labs.
 
-## What this is
-Agent Velocity scores every tracked open-source coding agent on a 0-100 velocity metric computed from commit cadence (55%), release recency (25%), and 6-month commit trend (20%). It answers: who is actually shipping fastest in the coding-agent race?
+Snapshot collected: 2026-11-02T19:48:55.995657+00:00
+Current catalog records: 14
 
-## Source & cadence
-- Data source: the public GitHub REST API (commits, releases, stars, forks, issues). Every number traces to a real API response — nothing is fabricated.
-- Cadence: recomputed and redeployed **daily** by an autonomous agent (Kymata Labs agent stack).
-- Caveat: velocity reflects *public-repo* activity only; privately developed agents rank below their true pace.
+## Sources and interpretation
 
-## Routes
-- `/` — the full leaderboard (podium + sortable table; filter by category; light/dark themes).
-- `/a/<owner>-<name>/` — per-agent detail page: velocity, rank, stars, forks, open issues, language, latest release, and a 6-month commit sparkline.
+- [Public GitHub repository API signals](https://docs.github.com/en/rest/repos)
+- [Collection and scoring source](https://github.com/tekvisions/agent-velocity/blob/main/build_data.py)
 
-## Tracked agents (14)
-- [sst/opencode](https://agentvelocity.kymatalabs.com/a/sst-opencode/) — CLI · velocity 91/100 · rank #1. The open-source, provider-agnostic AI coding agent for the terminal.
-- [openai/codex](https://agentvelocity.kymatalabs.com/a/openai-codex/) — CLI · velocity 89/100 · rank #2. OpenAI's open-source coding agent for the terminal.
-- [Kilo-Org/kilocode](https://agentvelocity.kymatalabs.com/a/kilo-org-kilocode/) — IDE / Editor · velocity 87/100 · rank #3. Open-source AI coding agent for VS Code (Cline/Roo lineage).
-- [QwenLM/qwen-code](https://agentvelocity.kymatalabs.com/a/qwenlm-qwen-code/) — CLI · velocity 86/100 · rank #4. Alibaba's Qwen-powered command-line coding agent.
-- [block/goose](https://agentvelocity.kymatalabs.com/a/block-goose/) — CLI · velocity 78/100 · rank #5. Block's open, extensible AI agent that codes and runs tasks.
-- [cline/cline](https://agentvelocity.kymatalabs.com/a/cline-cline/) — IDE / Editor · velocity 77/100 · rank #6. Autonomous coding agent right in your IDE (VS Code).
-- [charmbracelet/crush](https://agentvelocity.kymatalabs.com/a/charmbracelet-crush/) — CLI · velocity 73/100 · rank #7. Charm's glamorous terminal-based AI coding agent.
-- [google-gemini/gemini-cli](https://agentvelocity.kymatalabs.com/a/google-gemini-gemini-cli/) — CLI · velocity 57/100 · rank #8. Google's open-source AI agent that brings Gemini to your terminal.
-- [yetone/avante.nvim](https://agentvelocity.kymatalabs.com/a/yetone-avante-nvim/) — IDE / Editor · velocity 54/100 · rank #9. Cursor-style AI coding, natively in Neovim.
-- [OpenHands/OpenHands](https://agentvelocity.kymatalabs.com/a/openhands-openhands/) — Autonomous · velocity 46/100 · rank #10. A platform for autonomous software-engineering agents.
-- [anthropics/claude-code](https://agentvelocity.kymatalabs.com/a/anthropics-claude-code/) — CLI · velocity 43/100 · rank #11. Anthropic's agentic coding tool that lives in your terminal.
-- [continuedev/continue](https://agentvelocity.kymatalabs.com/a/continuedev-continue/) — IDE / Editor · velocity 21/100 · rank #12. Build, share & run custom AI code agents inside your IDE.
-- [SWE-agent/SWE-agent](https://agentvelocity.kymatalabs.com/a/swe-agent-swe-agent/) — Autonomous · velocity 14/100 · rank #13. Princeton's agent that fixes real GitHub issues autonomously.
-- [Aider-AI/aider](https://agentvelocity.kymatalabs.com/a/aider-ai-aider/) — CLI · velocity 4/100 · rank #14. AI pair programming in your terminal — edits across your repo.
+Momentum uses recent 30-day commit volume (55%), latest stable-release recency (25%), and change versus the prior 30-day commit window (20%), rounded and clamped to 0–100. Six 30-day windows supply the sparkline. This measures public repository activity, not product quality or private development; API failures can produce missing or zero-valued signals.
 
-## Publisher
-Kymata Labs — https://kymatalabs.com/
+## Readable and structured resources
+
+- [Catalog](https://agentvelocity.kymatalabs.com/)
+- [Selection guide and evidence limits](https://agentvelocity.kymatalabs.com/#catalog-guidance)
+- [Methodology and snapshot date](https://agentvelocity.kymatalabs.com/#catalog-methodology)
+- [Current source snapshot (JSON)](https://agentvelocity.kymatalabs.com/data.json)
+- [Sitemap of published pages](https://agentvelocity.kymatalabs.com/sitemap.xml)
+
+## Current catalog sample
+
+- [OpenHands/OpenHands](https://agentvelocity.kymatalabs.com/a/openhands-openhands/) — Autonomous
+- [sst/opencode](https://agentvelocity.kymatalabs.com/a/sst-opencode/) — CLI
+- [QwenLM/qwen-code](https://agentvelocity.kymatalabs.com/a/qwenlm-qwen-code/) — CLI
+- [openai/codex](https://agentvelocity.kymatalabs.com/a/openai-codex/) — CLI
+- [Kilo-Org/kilocode](https://agentvelocity.kymatalabs.com/a/kilo-org-kilocode/) — IDE / Editor
+- [cline/cline](https://agentvelocity.kymatalabs.com/a/cline-cline/) — IDE / Editor
+- [google-gemini/gemini-cli](https://agentvelocity.kymatalabs.com/a/google-gemini-gemini-cli/) — CLI
+- [charmbracelet/crush](https://agentvelocity.kymatalabs.com/a/charmbracelet-crush/) — CLI
+- [block/goose](https://agentvelocity.kymatalabs.com/a/block-goose/) — CLI
+- [yetone/avante.nvim](https://agentvelocity.kymatalabs.com/a/yetone-avante-nvim/) — IDE / Editor
+- [anthropics/claude-code](https://agentvelocity.kymatalabs.com/a/anthropics-claude-code/) — CLI
+- [continuedev/continue](https://agentvelocity.kymatalabs.com/a/continuedev-continue/) — IDE / Editor
+- [Aider-AI/aider](https://agentvelocity.kymatalabs.com/a/aider-ai-aider/) — CLI
+- [SWE-agent/SWE-agent](https://agentvelocity.kymatalabs.com/a/swe-agent-swe-agent/) — Autonomous

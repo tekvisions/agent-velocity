@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agent Velocity — the open-source coding-agent race</title>
-<meta name="description" content="A live leaderboard ranking open-source coding agents by shipping velocity — commit cadence, release recency, and 6-month trend. Who's winning the race to build the best coding agent? Updated daily.">
+<meta name="description" content="A leaderboard of selected open-source coding agents with GitHub activity, releases and documented velocity scoring. Compare dated snapshots and methodology.">
 <meta property="og:title" content="Agent Velocity — the coding-agent race, live">
 <meta property="og:description" content="Who's shipping fastest? Open-source coding agents ranked by real GitHub velocity, updated daily.">
 <meta property="og:type" content="website">
@@ -15,13 +15,10 @@
 <meta name="twitter:description" content="Who's shipping fastest? Open-source coding agents ranked by real GitHub velocity, updated daily.">
 <meta name="twitter:image" content="https://agentvelocity.kymatalabs.com/og-20261030.png">
 <meta name="theme-color" content="#0a0910">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@300;400;600;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="canonical" href="https://agentvelocity.kymatalabs.com/">
 <link rel="icon" href="favicon.svg">
 <link rel="alternate" type="application/rss+xml" title="Agent Velocity — the open-source coding-agent race" href="/rss.xml">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="/style.css">
 <script>
 /* no-flash theme: localStorage('theme') → else prefers-color-scheme → else dark */
 (function(){try{var t=localStorage.getItem("theme");if(!t){t=(window.matchMedia&&window.matchMedia("(prefers-color-scheme:light)").matches)?"light":"dark";}document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme="dark";}})();
@@ -35,7 +32,7 @@
       "@id": "https://agentvelocity.kymatalabs.com/#website",
       "url": "https://agentvelocity.kymatalabs.com/",
       "name": "Agent Velocity",
-      "description": "A live leaderboard ranking open-source coding agents by shipping velocity — commit cadence, release recency, and 6-month trend.",
+      "description": "A live leaderboard ranking open-source coding agents by shipping velocity — commit cadence, release recency, and change versus the prior 30-day window.",
       "inLanguage": "en",
       "publisher": { "@id": "https://kymatalabs.com/#org" }
     },
@@ -48,18 +45,21 @@
   ]
 }
 </script>
-<script type="application/ld+json" id="itemlist-ld"></script>
-<script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is Agent Velocity?", "acceptedAnswer": {"@type": "Answer", "text": "Agent Velocity is a live leaderboard of open-source coding agents — autonomous SWE agents, terminal agents and IDE copilots — ranked by GitHub momentum and recomputed daily. It shows which coding agents are gaining traction fastest right now. It is one of The Living Indexes by Kymata Labs."}}, {"@type": "Question", "name": "How is momentum scored?", "acceptedAnswer": {"@type": "Answer", "text": "A 0–100 score blending log-scaled GitHub stars (55%), push-recency (32%, decaying to zero by about 180 days) and rising-newness (13%). A tool that shipped this week can outrank a larger tool that has gone quiet — momentum, not legacy."}}, {"@type": "Question", "name": "How often is it updated?", "acceptedAnswer": {"@type": "Answer", "text": "Every day. The index recomputes each tool's momentum from live GitHub signals and republishes automatically."}}, {"@type": "Question", "name": "Part of The Living Indexes", "acceptedAnswer": {"@type": "Answer", "text": "A fleet of self-updating maps of the AI-builder ecosystem. Explore them all at indexes.kymatalabs.com."}}]}
-</script>
+
+
+<!-- catalog:schema:start -->
+<script type="application/ld+json" id="catalog-schema">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","@id":"https://agentvelocity.kymatalabs.com/#catalog","url":"https://agentvelocity.kymatalabs.com/","name":"Agent Velocity","dateModified":"2026-11-03","inLanguage":"en","mainEntity":{"@id":"https://agentvelocity.kymatalabs.com/#entries"},"isPartOf":{"@type":"WebSite","url":"https://agentvelocity.kymatalabs.com/","name":"Agent Velocity"}},{"@type":"ItemList","@id":"https://agentvelocity.kymatalabs.com/#entries","name":"Agent Velocity catalog snapshot","numberOfItems":14,"itemListElement":[{"@type":"ListItem","position":1,"url":"https://agentvelocity.kymatalabs.com/a/openhands-openhands/","name":"OpenHands/OpenHands"},{"@type":"ListItem","position":2,"url":"https://agentvelocity.kymatalabs.com/a/sst-opencode/","name":"sst/opencode"},{"@type":"ListItem","position":3,"url":"https://agentvelocity.kymatalabs.com/a/qwenlm-qwen-code/","name":"QwenLM/qwen-code"},{"@type":"ListItem","position":4,"url":"https://agentvelocity.kymatalabs.com/a/openai-codex/","name":"openai/codex"},{"@type":"ListItem","position":5,"url":"https://agentvelocity.kymatalabs.com/a/kilo-org-kilocode/","name":"Kilo-Org/kilocode"},{"@type":"ListItem","position":6,"url":"https://agentvelocity.kymatalabs.com/a/cline-cline/","name":"cline/cline"},{"@type":"ListItem","position":7,"url":"https://agentvelocity.kymatalabs.com/a/google-gemini-gemini-cli/","name":"google-gemini/gemini-cli"},{"@type":"ListItem","position":8,"url":"https://agentvelocity.kymatalabs.com/a/charmbracelet-crush/","name":"charmbracelet/crush"},{"@type":"ListItem","position":9,"url":"https://agentvelocity.kymatalabs.com/a/block-goose/","name":"block/goose"},{"@type":"ListItem","position":10,"url":"https://agentvelocity.kymatalabs.com/a/yetone-avante-nvim/","name":"yetone/avante.nvim"},{"@type":"ListItem","position":11,"url":"https://agentvelocity.kymatalabs.com/a/anthropics-claude-code/","name":"anthropics/claude-code"},{"@type":"ListItem","position":12,"url":"https://agentvelocity.kymatalabs.com/a/continuedev-continue/","name":"continuedev/continue"},{"@type":"ListItem","position":13,"url":"https://agentvelocity.kymatalabs.com/a/aider-ai-aider/","name":"Aider-AI/aider"},{"@type":"ListItem","position":14,"url":"https://agentvelocity.kymatalabs.com/a/swe-agent-swe-agent/","name":"SWE-agent/SWE-agent"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does this catalog cover?","acceptedAnswer":{"@type":"Answer","text":"Agent Velocity contains 14 records in the snapshot dated 2026-11-02T19:48:55.995657+00:00. Coverage is defined by its published data source and collection rules; inclusion is not an endorsement."}},{"@type":"Question","name":"How is the default order determined?","acceptedAnswer":{"@type":"Answer","text":"Momentum uses recent 30-day commit volume (55%), latest stable-release recency (25%), and change versus the prior 30-day commit window (20%), rounded and clamped to 0–100. Six 30-day windows supply the sparkline. This measures public repository activity, not product quality or private development; API failures can produce missing or zero-valued signals."}},{"@type":"Question","name":"When was this snapshot collected?","acceptedAnswer":{"@type":"Answer","text":"The recorded snapshot time is 2026-11-02T19:48:55.995657+00:00. The refresh workflow is scheduled daily; this timestamp records the available data rather than guaranteeing a successful refresh every day."}}]}]}</script>
+<!-- catalog:schema:end -->
+<link rel="alternate" type="application/json" href="/data.json" title="Current catalog snapshot">
+<script defer src="/guidance.js"></script>
+<script defer src="/fleet.js"></script>
 </head>
-<body>
+<body><a class="skip-link" href="#main-content">Skip to main content</a>
 <div class="geo-kstrip"><div class="wrap">
   <a href="https://www.kymatalabs.com" target="_blank" rel="noopener"><span class="d"></span>Kymata Labs</a>
   <span class="s">/</span>
   <a href="https://indexes.kymatalabs.com" target="_blank" rel="noopener">The Living Indexes</a>
-  <span class="g"></span>
-  <a href="https://www.kymatalabs.com/live" target="_blank" rel="noopener">Built by tekvisions ↗</a>
+
 </div></div>
 
 <canvas id="streaks" aria-hidden="true"></canvas>
@@ -75,14 +75,14 @@
       <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2 12h2.5M19.5 12H22M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
     </button>
   </div>
-</div></nav>
+</div></nav><main id="main-content">
 
 <header class="hero"><div class="wrap">
-  <div class="eyebrow"><span class="dot"></span><span id="liveline">The coding-agent race · recomputed daily</span></div>
-  <h1>Who's <em>shipping fastest</em> in the coding-agent race?</h1>
-  <p class="lede">A live leaderboard of open-source coding agents — ranked by real GitHub shipping velocity: commit cadence, release recency, and 6-month trend. Not by stars. By who's actually moving.</p>
-  <div class="meta-row" id="metarow"></div>
-  <div class="podium" id="podium"></div>
+  <div class="eyebrow"><span class="dot"></span><span id="liveline">The coding-agent race · recomputed on successful refresh</span></div>
+  <h1>Who's <em>shipping fastest</em> in the coding-agent race?</h1><div class="fleet-context" role="navigation" aria-label="Index resources"><a href="https://indexes.kymatalabs.com/">All indexes</a><a href="#catalog-guidance">Selection guide</a><a href="#catalog-methodology">Methodology</a></div>
+  <p class="lede">A live leaderboard of open-source coding agents — ranked by real GitHub shipping velocity: commit cadence, release recency, and change versus the prior 30-day window. Not by stars. By who's actually moving.</p>
+  <div class="meta-row" id="metarow"><div class="m"><b>14</b><span>Agents tracked</span></div><div class="m"><b>1.1M</b><span>Combined stars</span></div><div class="m"><b>100</b><span>Top velocity</span></div><div class="m"><b>opencode</b><span>Biggest mover</span></div></div>
+  <h2 class="fleet-list-title">Browse the catalog</h2><div class="podium" id="podium"></div>
 </div></header>
 
 <section id="board"><div class="wrap">
@@ -91,7 +91,7 @@
     <div class="filters" id="filters" role="group" aria-label="Filter agents by category"></div>
     <div class="searchwrap">
       <svg class="s-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-      <input id="search" type="search" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Filter the grid…" aria-label="Search agents by name, category, or language">
+      <input id="search" type="search" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Filter the grid…" aria-label="Search agents by name, category, or language" disabled>
       <button id="searchclear" type="button" class="s-clear" aria-label="Clear search" hidden>×</button>
     </div>
   </div>
@@ -99,32 +99,65 @@
     <span class="sortnote" id="sortnote" role="status" aria-live="polite">Ranked by velocity ↓</span>
     <span class="resultcount" id="resultcount" aria-live="polite"></span>
   </div>
-  <div class="bhead" role="row">
+  <div class="bhead" >
     <span>#</span>
-    <span class="c-n sortable" role="columnheader" tabindex="0" data-sort="name" aria-sort="none">Agent <span class="arrow">▼</span></span>
-    <span class="c-v sortable" role="columnheader" tabindex="0" data-sort="momentum" aria-sort="descending">Velocity <span class="arrow">▼</span></span>
-    <span class="c-s sortable" role="columnheader" tabindex="0" data-sort="recent4w_commits" aria-sort="none">Commits · 6mo <span class="arrow">▼</span></span>
-    <span class="r sortable" role="columnheader" tabindex="0" data-sort="stars" aria-sort="none">Stars <span class="arrow">▼</span></span>
+    <button type="button" class="c-n sortable" data-sort="name" data-sort-direction="none" disabled>Agent <span class="arrow">▼</span></button>
+    <button type="button" class="c-v sortable" data-sort="momentum" data-sort-direction="descending" disabled>Velocity <span class="arrow">▼</span></button>
+    <button type="button" class="c-s sortable" data-sort="recent4w_commits" data-sort-direction="none" disabled>Commits · 6mo <span class="arrow">▼</span></button>
+    <button type="button" class="r sortable" data-sort="stars" data-sort-direction="none" disabled>Stars <span class="arrow">▼</span></button>
   </div>
-  <div class="board" id="lboard" aria-live="polite"><div class="loading">Warming up the grid…</div></div>
+  <div class="board" id="lboard" aria-live="polite"><!-- catalog:entries:start -->
+<p class="catalog-guide-jump"><a href="#catalog-guidance">How to choose: scope, evidence and limitations</a></p><ol class="catalog-snapshot">
+<li value="1"><a href="https://agentvelocity.kymatalabs.com/a/openhands-openhands/">OpenHands/OpenHands</a><span class="catalog-category">Autonomous</span><p>A platform for autonomous software-engineering agents.</p><small>Momentum 100/100 · 92,510 GitHub stars</small></li>
+<li value="2"><a href="https://agentvelocity.kymatalabs.com/a/sst-opencode/">sst/opencode</a><span class="catalog-category">CLI</span><p>The open-source, provider-agnostic AI coding agent for the terminal.</p><small>Momentum 94/100 · 224,078 GitHub stars</small></li>
+<li value="3"><a href="https://agentvelocity.kymatalabs.com/a/qwenlm-qwen-code/">QwenLM/qwen-code</a><span class="catalog-category">CLI</span><p>Alibaba&#x27;s Qwen-powered command-line coding agent.</p><small>Momentum 93/100 · 28,893 GitHub stars</small></li>
+<li value="4"><a href="https://agentvelocity.kymatalabs.com/a/openai-codex/">openai/codex</a><span class="catalog-category">CLI</span><p>OpenAI&#x27;s open-source coding agent for the terminal.</p><small>Momentum 87/100 · 132,874 GitHub stars</small></li>
+<li value="5"><a href="https://agentvelocity.kymatalabs.com/a/kilo-org-kilocode/">Kilo-Org/kilocode</a><span class="catalog-category">IDE / Editor</span><p>Open-source AI coding agent for VS Code (Cline/Roo lineage).</p><small>Momentum 85/100 · 27,834 GitHub stars</small></li>
+<li value="6"><a href="https://agentvelocity.kymatalabs.com/a/cline-cline/">cline/cline</a><span class="catalog-category">IDE / Editor</span><p>Autonomous coding agent right in your IDE (VS Code).</p><small>Momentum 60/100 · 71,221 GitHub stars</small></li>
+<li value="7"><a href="https://agentvelocity.kymatalabs.com/a/google-gemini-gemini-cli/">google-gemini/gemini-cli</a><span class="catalog-category">CLI</span><p>Google&#x27;s open-source AI agent that brings Gemini to your terminal.</p><small>Momentum 57/100 · 108,675 GitHub stars</small></li>
+<li value="8"><a href="https://agentvelocity.kymatalabs.com/a/charmbracelet-crush/">charmbracelet/crush</a><span class="catalog-category">CLI</span><p>Charm&#x27;s glamorous terminal-based AI coding agent.</p><small>Momentum 56/100 · 28,920 GitHub stars</small></li>
+<li value="9"><a href="https://agentvelocity.kymatalabs.com/a/block-goose/">block/goose</a><span class="catalog-category">CLI</span><p>Block&#x27;s open, extensible AI agent that codes and runs tasks.</p><small>Momentum 54/100 · 56,142 GitHub stars</small></li>
+<li value="10"><a href="https://agentvelocity.kymatalabs.com/a/yetone-avante-nvim/">yetone/avante.nvim</a><span class="catalog-category">IDE / Editor</span><p>Cursor-style AI coding, natively in Neovim.</p><small>Momentum 50/100 · 18,182 GitHub stars</small></li>
+<li value="11"><a href="https://agentvelocity.kymatalabs.com/a/anthropics-claude-code/">anthropics/claude-code</a><span class="catalog-category">CLI</span><p>Anthropic&#x27;s agentic coding tool that lives in your terminal.</p><small>Momentum 37/100 · 154,284 GitHub stars</small></li>
+<li value="12"><a href="https://agentvelocity.kymatalabs.com/a/continuedev-continue/">continuedev/continue</a><span class="catalog-category">IDE / Editor</span><p>Build, share &amp; run custom AI code agents inside your IDE.</p><small>Momentum 24/100 · 36,399 GitHub stars</small></li>
+<li value="13"><a href="https://agentvelocity.kymatalabs.com/a/aider-ai-aider/">Aider-AI/aider</a><span class="catalog-category">CLI</span><p>AI pair programming in your terminal — edits across your repo.</p><small>Momentum 10/100 · 49,910 GitHub stars</small></li>
+<li value="14"><a href="https://agentvelocity.kymatalabs.com/a/swe-agent-swe-agent/">SWE-agent/SWE-agent</a><span class="catalog-category">Autonomous</span><p>Princeton&#x27;s agent that fixes real GitHub issues autonomously.</p><small>Momentum 10/100 · 20,712 GitHub stars</small></li>
+</ol>
+<!-- catalog:entries:end --></div><!-- catalog:pagination:start -->
+
+<!-- catalog:pagination:end -->
 </div></section>
 
-<section class="geo-about">
-  <h2>About Agent Velocity</h2>
-  <p class="intro">Agent Velocity is a live leaderboard of the open-source coding-agent race &mdash; the autonomous and assisted coding tools (SWE agents, terminal agents, IDE copilots) competing on GitHub momentum. Every contender is ranked daily from live GitHub signals, so the board shows who is pulling ahead right now. It is one of The Living Indexes, a fleet published by Kymata Labs.</p>
-  <div class="geo-faq">
-      <div class="q"><h3>What is Agent Velocity?</h3><p>Agent Velocity is a live leaderboard of open-source coding agents &mdash; autonomous SWE agents, terminal agents and IDE copilots &mdash; ranked by GitHub momentum and recomputed daily. It shows which coding agents are gaining traction fastest right now. It is one of The Living Indexes by Kymata Labs.</p></div>
-      <div class="q"><h3>How is momentum scored?</h3><p>A 0&ndash;100 score blending log-scaled GitHub stars (55%), push-recency (32%, decaying to zero by about 180 days) and rising-newness (13%). A tool that shipped this week can outrank a larger tool that has gone quiet &mdash; momentum, not legacy.</p></div>
-      <div class="q"><h3>How often is it updated?</h3><p>Every day. The index recomputes each tool's momentum from live GitHub signals and republishes automatically.</p></div>
-      <div class="q"><h3>Part of The Living Indexes</h3><p>A fleet of self-updating maps of the AI-builder ecosystem. Explore them all at <a href="https://indexes.kymatalabs.com">indexes.kymatalabs.com</a>.</p></div>
-  </div>
-</section>
+<!-- catalog:about:start -->
+<section class="catalog-about selection-guide" id="catalog-guidance"><h2>Choose coding agents with a task-based trial</h2>
+<p>This tracker measures public repository shipping activity. Use it to discover coding agents, then evaluate the workflow you need in a separate, permitted repository trial.</p>
+<p class="guide-date">Guide sources reviewed <time datetime="2026-11-03">2026-11-03</time>. Catalog snapshot: <time datetime="2026-11-02T19:48:55.995657+00:00">2026-11-02T19:48:55.995657+00:00</time>. Source review does not mean runtime testing.</p>
+<div class="selection-choices">
+<div><h3>Fit your development interface</h3><p>Check editor/terminal integration, supported models, authentication and how changes are reviewed before execution.</p>
+<p><strong>Current catalog categories:</strong> CLI; IDE / Editor.</p>
+</div>
+<div><h3>Evaluate a longer software task</h3><p>Define acceptance tests, workspace limits, tool permissions and a time/cost budget. Include a case that requires recovery from a failed command.</p>
+<p><strong>Current catalog categories:</strong> Autonomous.</p>
+</div>
+<div><h3>Build a coding-agent workflow</h3><p>Verify extension APIs, state, tool isolation and test hooks in the version you intend to use.</p>
+<p><strong>Current catalog categories:</strong> Framework.</p>
+</div>
+</div><h3>Evidence to check before choosing</h3><ul>
+<li>Compare the same task, model, tools and acceptance criteria.</li>
+<li>Inspect changed files and executed commands, not only the final summary.</li>
+<li>Private development, monorepo structure and release practices limit public-commit comparisons.</li>
+</ul>
+<h3>What remains unknown</h3><p>Commit velocity does not establish coding correctness, security, developer productivity or comparative task success.</p>
+<h3>Sources and scope</h3><ul>
+<li><a href="https://github.com/tekvisions/agent-velocity/blob/03b2411331c187cf4d5040c06b019f87ec382b33/build_data.py">Published collection and scoring rules</a></li>
+</ul><p>Continue by task: <a href="https://agents.kymatalabs.com/">agents</a> · <a href="https://eval.kymatalabs.com/">eval</a> · <a href="https://observability.kymatalabs.com/">observability</a>.</p></section><section class="catalog-about" id="catalog-methodology"><h2>About Agent Velocity</h2><p>Snapshot: <time datetime="2026-11-02T19:48:55.995657+00:00">2026-11-02T19:48:55.995657+00:00</time> · 14 catalog records.</p><p>Source: <a href="https://docs.github.com/en/rest/repos">Public GitHub repository API signals</a>. <a href="https://github.com/tekvisions/agent-velocity/blob/main/build_data.py">Collection and scoring source</a> · <a href="/data.json">Current JSON snapshot</a> · <a href="/sitemap.xml">Page inventory</a>.</p><h3>What does this catalog cover?</h3><p>Agent Velocity contains 14 records in the snapshot dated 2026-11-02T19:48:55.995657+00:00. Coverage is defined by its published data source and collection rules; inclusion is not an endorsement.</p><h3>How is the default order determined?</h3><p>Momentum uses recent 30-day commit volume (55%), latest stable-release recency (25%), and change versus the prior 30-day commit window (20%), rounded and clamped to 0–100. Six 30-day windows supply the sparkline. This measures public repository activity, not product quality or private development; API failures can produce missing or zero-valued signals.</p><h3>When was this snapshot collected?</h3><p>The recorded snapshot time is 2026-11-02T19:48:55.995657+00:00. The refresh workflow is scheduled daily; this timestamp records the available data rather than guaranteeing a successful refresh every day.</p><p>Browse <a href="https://indexes.kymatalabs.com/">The Living Indexes</a> by topic. Published by <a href="https://www.kymatalabs.com/">Kymata Labs</a>.</p><p>Entry descriptions come from upstream publishers or the configured catalog. Promotional claims have not been independently tested by this index.</p></section>
+<!-- catalog:about:end -->
 
 <aside data-portfolio-ad="after-content" aria-label="Advertisement" hidden></aside>
-<footer id="how"><div class="wrap">
+</main><footer id="how"><div class="wrap">
   <span class="mono" style="color:var(--hot-2)">How it's made</span>
   <h2>The race, scored by <em>shipping</em> — not hype.</h2>
-  <p>Stars measure yesterday's popularity. Agent Velocity measures who's moving now: the index uses live GitHub signals for every coding agent daily, scores velocity as commit cadence (55%) + release recency (25%) + 6-month trend (20%), and refreshes this board. Published by <a class="inl" href="https://kymatalabs.com/" target="_blank" rel="noopener">Kymata Labs</a>.</p>
+  <p>Stars measure yesterday's popularity. Agent Velocity measures who's moving now: the index uses live GitHub signals for selected coding agents daily, scores velocity as commit cadence (55%) + release recency (25%) + change versus the prior 30-day window (20%), and refreshes this board. Published by <a class="inl" href="https://kymatalabs.com/" target="_blank" rel="noopener">Kymata Labs</a>.</p>
   <p style="font-size:14px;color:var(--muted)"><em>One honest caveat: velocity reflects <strong style="color:var(--ink-soft);font-weight:500">public-repo</strong> commit activity. An agent developed privately, or whose open-source repo is mostly releases and issues, will rank below its true shipping pace. This board measures what's visible on GitHub.</em></p>
   <div class="foot-row">
     <span id="footgen">Recomputed daily</span>
@@ -139,6 +172,7 @@
 /* speed-streaks hero — horizontal light trails ripping left→right. Theme-aware. */
 (function(){
   if(window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  if(window.matchMedia && window.matchMedia("(max-width:800px)").matches) return;
   var cv=document.getElementById("streaks"); if(!cv) return;
   var ctx=cv.getContext("2d"), W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,2), ps=[], raf;
   /* streak palette + alpha multiplier per theme; re-read on toggle */

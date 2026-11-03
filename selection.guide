@@ -1,0 +1,57 @@
+{
+  "host": "agentvelocity.kymatalabs.com",
+  "reviewed_on": "2026-11-03",
+  "title": "Choose coding agents with a task-based trial",
+  "answer": "This tracker measures public repository shipping activity. Use it to discover coding agents, then evaluate the workflow you need in a separate, permitted repository trial.",
+  "choices": [
+    {
+      "categories": [
+        "CLI",
+        "IDE / Editor"
+      ],
+      "task": "Fit your development interface",
+      "guidance": "Check editor/terminal integration, supported models, authentication and how changes are reviewed before execution."
+    },
+    {
+      "categories": [
+        "Autonomous"
+      ],
+      "task": "Evaluate a longer software task",
+      "guidance": "Define acceptance tests, workspace limits, tool permissions and a time/cost budget. Include a case that requires recovery from a failed command."
+    },
+    {
+      "categories": [
+        "Framework"
+      ],
+      "task": "Build a coding-agent workflow",
+      "guidance": "Verify extension APIs, state, tool isolation and test hooks in the version you intend to use."
+    }
+  ],
+  "checks": [
+    "Compare the same task, model, tools and acceptance criteria.",
+    "Inspect changed files and executed commands, not only the final summary.",
+    "Private development, monorepo structure and release practices limit public-commit comparisons."
+  ],
+  "unknowns": "Commit velocity does not establish coding correctness, security, developer productivity or comparative task success.",
+  "related": [
+    {
+      "url": "https://agents.kymatalabs.com/",
+      "label": "agents"
+    },
+    {
+      "url": "https://eval.kymatalabs.com/",
+      "label": "eval"
+    },
+    {
+      "url": "https://observability.kymatalabs.com/",
+      "label": "observability"
+    }
+  ],
+  "sources": [
+    {
+      "title": "Published collection and scoring rules",
+      "url": "https://github.com/tekvisions/agent-velocity/blob/03b2411331c187cf4d5040c06b019f87ec382b33/build_data.py",
+      "reviewed_on": "2026-11-03"
+    }
+  ]
+}
