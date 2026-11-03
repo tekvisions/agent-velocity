@@ -68,7 +68,7 @@
       var rel=r.last_release?'<div class="rel" title="Latest stable release">'+esc(r.last_release)+' · '+relDate(r.last_release_at)+'</div>':'';
       var v=r.recent4w_commits>=3000?"3000+":r.recent4w_commits;
       var p=posture(r);
-      return '<a class="lrow" href="'+esc(detailUrl(r))+'" data-slug="'+esc(slugify(r.owner+"-"+r.name))+'" data-posture="'+p.k+'" aria-label="'+esc(r.name)+', rank '+r.rank+', velocity '+r.momentum+', '+p.label+'">'
+      return '<a class="lrow" href="'+esc(detailUrl(r))+'" data-slug="'+esc(slugify(r.owner+"-"+r.name))+'" data-posture="'+p.k+'">'
         +'<span class="lrank '+(r.rank<=3?"t"+r.rank:"")+'">'+r.rank+moveBadge(r)+'</span>'
         +'<div class="lname"><h3>'+hi(r.name)+' <span class="owner">'+hi(r.owner)+'</span> <span class="cat">'+esc(r.category)+'</span></h3>'
           +'<p>'+hi(r.blurb)+'</p>'+rel+'</div>'
