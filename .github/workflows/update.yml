@@ -50,7 +50,7 @@ jobs:
           git config user.name "agent-velocity-bot"
           git config user.email "actions@users.noreply.github.com"
           if ! git diff --quiet -- index.html sitemap.xml llms.txt data.json og.png og-20261030.png; then
-            git add index.html sitemap.xml llms.txt data.json og.png og-20261030.png && git commit -m "data: daily velocity refresh ($(date -u +%Y-%m-%d))" && git push
+            git add capabilities.json ai.txt index.html sitemap.xml llms.txt data.json og.png og-20261030.png && git commit -m "data: daily velocity refresh ($(date -u +%Y-%m-%d))" && git push
           else echo "No data change."; fi
       - name: Deploy to Vercel
         if: ${{ env.VERCEL_TOKEN != '' }}
