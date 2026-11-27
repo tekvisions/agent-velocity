@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-26T19:18:08.824601+00:00",
-  "generated_date": "2026-11-26",
+  "generated_at": "2026-11-27T19:11:48.792203+00:00",
+  "generated_date": "2026-11-27",
   "repo_count": 14,
   "categories": [
     "CLI",
@@ -10,8 +10,8 @@
   ],
   "trending": [
     "openai/codex",
-    "sst/opencode",
-    "charmbracelet/crush"
+    "charmbracelet/crush",
+    "anthropics/claude-code"
   ],
   "movers": [
     {
@@ -21,16 +21,7 @@
       "rank": 1,
       "rank_delta": 0,
       "momentum": 92,
-      "commit_delta": 285
-    },
-    {
-      "repo": "sst/opencode",
-      "name": "opencode",
-      "owner": "sst",
-      "rank": 2,
-      "rank_delta": 0,
-      "momentum": 91,
-      "commit_delta": 185
+      "commit_delta": 227
     },
     {
       "repo": "charmbracelet/crush",
@@ -39,7 +30,7 @@
       "rank": 5,
       "rank_delta": 0,
       "momentum": 87,
-      "commit_delta": 177
+      "commit_delta": 172
     },
     {
       "repo": "anthropics/claude-code",
@@ -48,7 +39,16 @@
       "rank": 7,
       "rank_delta": 0,
       "momentum": 76,
-      "commit_delta": 156
+      "commit_delta": 161
+    },
+    {
+      "repo": "sst/opencode",
+      "name": "opencode",
+      "owner": "sst",
+      "rank": 2,
+      "rank_delta": 0,
+      "momentum": 91,
+      "commit_delta": 152
     },
     {
       "repo": "block/goose",
@@ -57,7 +57,7 @@
       "rank": 8,
       "rank_delta": 0,
       "momentum": 76,
-      "commit_delta": 93
+      "commit_delta": 100
     }
   ],
   "repos": [
@@ -67,36 +67,32 @@
       "owner": "openai",
       "category": "CLI",
       "blurb": "OpenAI's open-source coding agent for the terminal.",
-      "stars": 136569,
-      "forks": 21647,
-      "open_issues": 28736,
+      "stars": 136677,
+      "forks": 21664,
+      "open_issues": 28835,
       "contributors": 750,
-      "open_prs": 159,
+      "open_prs": 158,
       "release_cadence_days": null,
       "language": "Rust",
       "archived": false,
       "homepage": null,
       "html_url": "https://github.com/openai/codex",
-      "pushed_at": "2026-11-26T19:17:09Z",
+      "pushed_at": "2026-11-27T19:10:36Z",
       "last_release": "rust-v0.172.0",
       "last_release_at": "2026-11-24T00:03:55Z",
       "monthly_commits": [
-        934,
-        791,
-        1273,
-        1511,
-        1265,
-        1550
+        933,
+        836,
+        1251,
+        1520,
+        1290,
+        1517
       ],
-      "recent4w_commits": 1550,
-      "prior4w_commits": 1265,
-      "commit_delta": 285,
+      "recent4w_commits": 1517,
+      "prior4w_commits": 1290,
+      "commit_delta": 227,
       "momentum": 92,
       "stars_history": [
-        {
-          "date": "2026-08-28",
-          "stars": 119545
-        },
         {
           "date": "2026-08-29",
           "stars": 119740
@@ -452,15 +448,14 @@
         {
           "date": "2026-11-26",
           "stars": 136569
+        },
+        {
+          "date": "2026-11-27",
+          "stars": 136677
         }
       ],
       "rank": 1,
       "rank_history": [
-        {
-          "date": "2026-08-28",
-          "rank": 1,
-          "momentum": 96
-        },
         {
           "date": "2026-08-29",
           "rank": 1,
@@ -905,6 +900,11 @@
           "date": "2026-11-26",
           "rank": 1,
           "momentum": 92
+        },
+        {
+          "date": "2026-11-27",
+          "rank": 1,
+          "momentum": 92
         }
       ],
       "rank_prev": 1,
@@ -918,36 +918,32 @@
       "owner": "sst",
       "category": "CLI",
       "blurb": "The open-source, provider-agnostic AI coding agent for the terminal.",
-      "stars": 229376,
-      "forks": 31239,
-      "open_issues": 4187,
-      "contributors": 1103,
-      "open_prs": 1388,
+      "stars": 229614,
+      "forks": 31273,
+      "open_issues": 4140,
+      "contributors": 1104,
+      "open_prs": 1363,
       "release_cadence_days": 1.5,
       "language": "TypeScript",
       "archived": false,
       "homepage": "https://opencode.ai",
       "html_url": "https://github.com/anomalyco/opencode",
-      "pushed_at": "2026-11-26T19:06:19Z",
+      "pushed_at": "2026-11-27T19:07:46Z",
       "last_release": "v1.19.6",
       "last_release_at": "2026-11-17T07:21:32Z",
       "monthly_commits": [
-        1055,
-        1567,
-        1957,
-        1532,
-        1779,
-        1964
+        1119,
+        1523,
+        1971,
+        1503,
+        1815,
+        1967
       ],
-      "recent4w_commits": 1964,
-      "prior4w_commits": 1779,
-      "commit_delta": 185,
+      "recent4w_commits": 1967,
+      "prior4w_commits": 1815,
+      "commit_delta": 152,
       "momentum": 91,
       "stars_history": [
-        {
-          "date": "2026-08-28",
-          "stars": 202183
-        },
         {
           "date": "2026-08-29",
           "stars": 202311
@@ -1303,15 +1299,14 @@
         {
           "date": "2026-11-26",
           "stars": 229376
+        },
+        {
+          "date": "2026-11-27",
+          "stars": 229614
         }
       ],
       "rank": 2,
       "rank_history": [
-        {
-          "date": "2026-08-28",
-          "rank": 6,
-          "momentum": 82
-        },
         {
           "date": "2026-08-29",
           "rank": 6,
@@ -1756,6 +1751,11 @@
           "date": "2026-11-26",
           "rank": 2,
           "momentum": 91
+        },
+        {
+          "date": "2026-11-27",
+          "rank": 2,
+          "momentum": 91
         }
       ],
       "rank_prev": 2,
@@ -1769,36 +1769,32 @@
       "owner": "OpenHands",
       "category": "Autonomous",
       "blurb": "A platform for autonomous software-engineering agents.",
-      "stars": 94411,
-      "forks": 12657,
-      "open_issues": 1268,
+      "stars": 94459,
+      "forks": 12666,
+      "open_issues": 1253,
       "contributors": 605,
-      "open_prs": 601,
+      "open_prs": 585,
       "release_cadence_days": 1.8,
       "language": "TypeScript",
       "archived": false,
       "homepage": "https://openhands.dev",
       "html_url": "https://github.com/OpenHands/OpenHands",
-      "pushed_at": "2026-11-26T15:13:01Z",
+      "pushed_at": "2026-11-27T16:32:07Z",
       "last_release": "v1.46.0",
       "last_release_at": "2026-11-25T14:13:07Z",
       "monthly_commits": [
-        398,
-        246,
-        193,
+        408,
+        249,
+        180,
         230,
-        435,
-        481
+        443,
+        479
       ],
-      "recent4w_commits": 481,
-      "prior4w_commits": 435,
-      "commit_delta": 46,
+      "recent4w_commits": 479,
+      "prior4w_commits": 443,
+      "commit_delta": 36,
       "momentum": 91,
       "stars_history": [
-        {
-          "date": "2026-08-28",
-          "stars": 85461
-        },
         {
           "date": "2026-08-29",
           "stars": 85536
@@ -2154,15 +2150,14 @@
         {
           "date": "2026-11-26",
           "stars": 94411
+        },
+        {
+          "date": "2026-11-27",
+          "stars": 94459
         }
       ],
       "rank": 3,
       "rank_history": [
-        {
-          "date": "2026-08-28",
-          "rank": 7,
-          "momentum": 60
-        },
         {
           "date": "2026-08-29",
           "rank": 7,
@@ -2607,6 +2602,11 @@
           "date": "2026-11-26",
           "rank": 3,
           "momentum": 91
+        },
+        {
+          "date": "2026-11-27",
+          "rank": 3,
+          "momentum": 91
         }
       ],
       "rank_prev": 3,
@@ -2620,36 +2620,32 @@
       "owner": "QwenLM",
       "category": "CLI",
       "blurb": "Alibaba's Qwen-powered command-line coding agent.",
-      "stars": 30960,
-      "forks": 3585,
-      "open_issues": 2565,
+      "stars": 30984,
+      "forks": 3589,
+      "open_issues": 2586,
       "contributors": 654,
-      "open_prs": 559,
+      "open_prs": 570,
       "release_cadence_days": 0.5,
       "language": "TypeScript",
       "archived": false,
       "homepage": "https://qwenlm.github.io/qwen-code-docs/en/users/overview",
       "html_url": "https://github.com/QwenLM/qwen-code",
-      "pushed_at": "2026-11-26T19:06:48Z",
-      "last_release": "v0.28.7",
-      "last_release_at": "2026-11-26T18:04:26Z",
+      "pushed_at": "2026-11-27T19:02:45Z",
+      "last_release": "sdk-typescript-v0.1.39",
+      "last_release_at": "2026-11-27T08:06:02Z",
       "monthly_commits": [
-        755,
-        1235,
-        1044,
-        1190,
-        1370,
-        1427
+        763,
+        1267,
+        1051,
+        1175,
+        1365,
+        1425
       ],
-      "recent4w_commits": 1427,
-      "prior4w_commits": 1370,
-      "commit_delta": 57,
+      "recent4w_commits": 1425,
+      "prior4w_commits": 1365,
+      "commit_delta": 60,
       "momentum": 90,
       "stars_history": [
-        {
-          "date": "2026-08-28",
-          "stars": 27463
-        },
         {
           "date": "2026-08-29",
           "stars": 27479
@@ -3005,15 +3001,14 @@
         {
           "date": "2026-11-26",
           "stars": 30960
+        },
+        {
+          "date": "2026-11-27",
+          "stars": 30984
         }
       ],
       "rank": 4,
       "rank_history": [
-        {
-          "date": "2026-08-28",
-          "rank": 5,
-          "momentum": 88
-        },
         {
           "date": "2026-08-29",
           "rank": 4,
@@ -3458,6 +3453,11 @@
           "date": "2026-11-26",
           "rank": 4,
           "momentum": 90
+        },
+        {
+          "date": "2026-11-27",
+          "rank": 4,
+          "momentum": 90
         }
       ],
       "rank_prev": 4,
@@ -3471,36 +3471,32 @@
       "owner": "charmbracelet",
       "category": "CLI",
       "blurb": "Charm's glamorous terminal-based AI coding agent.",
-      "stars": 29213,
-      "forks": 2406,
-      "open_issues": 600,
+      "stars": 29218,
+      "forks": 2411,
+      "open_issues": 604,
       "contributors": 169,
-      "open_prs": 292,
-      "release_cadence_days": 7.0,
+      "open_prs": 297,
+      "release_cadence_days": 6.9,
       "language": "Go",
       "archived": false,
       "homepage": null,
       "html_url": "https://github.com/charmbracelet/crush",
-      "pushed_at": "2026-11-26T16:49:09Z",
-      "last_release": "v0.103.0",
-      "last_release_at": "2026-11-26T15:56:38Z",
+      "pushed_at": "2026-11-27T18:45:19Z",
+      "last_release": "v0.104.0",
+      "last_release_at": "2026-11-27T13:39:18Z",
       "monthly_commits": [
-        163,
-        281,
-        148,
-        178,
-        126,
-        303
+        168,
+        293,
+        138,
+        176,
+        132,
+        304
       ],
-      "recent4w_commits": 303,
-      "prior4w_commits": 126,
-      "commit_delta": 177,
+      "recent4w_commits": 304,
+      "prior4w_commits": 132,
+      "commit_delta": 172,
       "momentum": 87,
       "stars_history": [
-        {
-          "date": "2026-08-28",
-          "stars": 27760
-        },
         {
           "date": "2026-08-29",
           "stars": 27779
@@ -3856,15 +3852,14 @@
         {
           "date": "2026-11-26",
           "stars": 29213
+        },
+        {
+          "date": "2026-11-27",
+          "stars": 29218
         }
       ],
       "rank": 5,
       "rank_history": [
-        {
-          "date": "2026-08-28",
-          "rank": 8,
-          "momentum": 51
-        },
         {
           "date": "2026-08-29",
           "rank": 8,
@@ -4309,6 +4304,11 @@
           "date": "2026-11-26",
           "rank": 5,
           "momentum": 87
+        },
+        {
+          "date": "2026-11-27",
+          "rank": 5,
+          "momentum": 87
         }
       ],
       "rank_prev": 5,
@@ -4322,36 +4322,32 @@
       "owner": "Kilo-Org",
       "category": "IDE / Editor",
       "blurb": "Open-source AI coding agent for VS Code (Cline/Roo lineage).",
-      "stars": 28140,
-      "forks": 3399,
-      "open_issues": 1000,
+      "stars": 28146,
+      "forks": 3402,
+      "open_issues": 1010,
       "contributors": 1276,
-      "open_prs": 333,
-      "release_cadence_days": null,
+      "open_prs": 336,
+      "release_cadence_days": 6.8,
       "language": "TypeScript",
       "archived": false,
       "homepage": "https://kilo.ai/",
       "html_url": "https://github.com/Kilo-Org/kilocode",
-      "pushed_at": "2026-11-26T18:57:21Z",
-      "last_release": "v7.8.32",
-      "last_release_at": "2026-11-20T14:45:09Z",
+      "pushed_at": "2026-11-27T19:08:05Z",
+      "last_release": "v7.8.40",
+      "last_release_at": "2026-11-27T09:22:50Z",
       "monthly_commits": [
         3000,
-        2147,
-        2578,
-        2226,
-        1303,
-        564
+        2174,
+        2440,
+        2256,
+        1312,
+        570
       ],
-      "recent4w_commits": 564,
-      "prior4w_commits": 1303,
-      "commit_delta": -739,
+      "recent4w_commits": 570,
+      "prior4w_commits": 1312,
+      "commit_delta": -742,
       "momentum": 84,
       "stars_history": [
-        {
-          "date": "2026-08-28",
-          "stars": 27055
-        },
         {
           "date": "2026-08-29",
           "stars": 27063
@@ -4707,15 +4703,14 @@
         {
           "date": "2026-11-26",
           "stars": 28140
+        },
+        {
+          "date": "2026-11-27",
+          "stars": 28146
         }
       ],
       "rank": 6,
       "rank_history": [
-        {
-          "date": "2026-08-28",
-          "rank": 3,
-          "momentum": 90
-        },
         {
           "date": "2026-08-29",
           "rank": 3,
@@ -5160,6 +5155,11 @@
           "date": "2026-11-26",
           "rank": 6,
           "momentum": 84
+        },
+        {
+          "date": "2026-11-27",
+          "rank": 6,
+          "momentum": 84
         }
       ],
       "rank_prev": 6,
@@ -5173,36 +5173,32 @@
       "owner": "anthropics",
       "category": "CLI",
       "blurb": "Anthropic's agentic coding tool that lives in your terminal.",
-      "stars": 157195,
-      "forks": 25136,
-      "open_issues": 16470,
-      "contributors": 59,
-      "open_prs": 634,
+      "stars": 157309,
+      "forks": 25151,
+      "open_issues": 16541,
+      "contributors": 60,
+      "open_prs": 630,
       "release_cadence_days": 1.1,
       "language": "TypeScript",
       "archived": false,
       "homepage": "https://code.claude.com/docs/en/overview",
       "html_url": "https://github.com/anthropics/claude-code",
-      "pushed_at": "2026-11-26T14:34:10Z",
+      "pushed_at": "2026-11-27T10:13:55Z",
       "last_release": "v2.1.332",
       "last_release_at": "2026-11-25T01:32:14Z",
       "monthly_commits": [
-        32,
-        34,
+        39,
+        27,
         29,
-        137,
-        70,
-        226
+        143,
+        67,
+        228
       ],
-      "recent4w_commits": 226,
-      "prior4w_commits": 70,
-      "commit_delta": 156,
+      "recent4w_commits": 228,
+      "prior4w_commits": 67,
+      "commit_delta": 161,
       "momentum": 76,
       "stars_history": [
-        {
-          "date": "2026-08-28",
-          "stars": 143297
-        },
         {
           "date": "2026-08-29",
           "stars": 143371
@@ -5558,15 +5554,14 @@
         {
           "date": "2026-11-26",
           "stars": 157195
+        },
+        {
+          "date": "2026-11-27",
+          "stars": 157309
         }
       ],
       "rank": 7,
       "rank_history": [
-        {
-          "date": "2026-08-28",
-          "rank": 11,
-          "momentum": 38
-        },
         {
           "date": "2026-08-29",
           "rank": 11,
@@ -6011,6 +6006,11 @@
           "date": "2026-11-26",
           "rank": 7,
           "momentum": 76
+        },
+        {
+          "date": "2026-11-27",
+          "rank": 7,
+          "momentum": 76
         }
       ],
       "rank_prev": 7,
@@ -6024,36 +6024,32 @@
       "owner": "block",
       "category": "CLI",
       "blurb": "Block's open, extensible AI agent that codes and runs tasks.",
-      "stars": 57035,
-      "forks": 6679,
-      "open_issues": 528,
-      "contributors": 702,
-      "open_prs": 126,
+      "stars": 57074,
+      "forks": 6686,
+      "open_issues": 542,
+      "contributors": 703,
+      "open_prs": 133,
       "release_cadence_days": 1.7,
       "language": "Rust",
       "archived": false,
       "homepage": "https://goose-docs.ai/",
       "html_url": "https://github.com/aaif-goose/goose",
-      "pushed_at": "2026-11-26T09:25:55Z",
+      "pushed_at": "2026-11-27T17:32:56Z",
       "last_release": "v1.61.1",
       "last_release_at": "2026-11-26T00:09:20Z",
       "monthly_commits": [
-        263,
-        276,
-        367,
-        188,
-        162,
-        255
+        273,
+        278,
+        356,
+        198,
+        154,
+        254
       ],
-      "recent4w_commits": 255,
-      "prior4w_commits": 162,
-      "commit_delta": 93,
+      "recent4w_commits": 254,
+      "prior4w_commits": 154,
+      "commit_delta": 100,
       "momentum": 76,
       "stars_history": [
-        {
-          "date": "2026-08-28",
-          "stars": 53619
-        },
         {
           "date": "2026-08-29",
           "stars": 53644
@@ -6409,15 +6405,14 @@
         {
           "date": "2026-11-26",
           "stars": 57035
+        },
+        {
+          "date": "2026-11-27",
+          "stars": 57074
         }
       ],
       "rank": 8,
       "rank_history": [
-        {
-          "date": "2026-08-28",
-          "rank": 4,
-          "momentum": 89
-        },
         {
           "date": "2026-08-29",
           "rank": 5,
@@ -6862,6 +6857,11 @@
           "date": "2026-11-26",
           "rank": 8,
           "momentum": 76
+        },
+        {
+          "date": "2026-11-27",
+          "rank": 8,
+          "momentum": 76
         }
       ],
       "rank_prev": 8,
@@ -6875,11 +6875,11 @@
       "owner": "yetone",
       "category": "IDE / Editor",
       "blurb": "Cursor-style AI coding, natively in Neovim.",
-      "stars": 18208,
-      "forks": 860,
-      "open_issues": 42,
+      "stars": 18210,
+      "forks": 858,
+      "open_issues": 43,
       "contributors": 302,
-      "open_prs": 18,
+      "open_prs": 19,
       "release_cadence_days": 0.7,
       "language": "Lua",
       "archived": false,
@@ -6893,18 +6893,14 @@
         37,
         54,
         99,
-        103,
-        176
+        106,
+        173
       ],
-      "recent4w_commits": 176,
-      "prior4w_commits": 103,
-      "commit_delta": 73,
-      "momentum": 66,
+      "recent4w_commits": 173,
+      "prior4w_commits": 106,
+      "commit_delta": 67,
+      "momentum": 65,
       "stars_history": [
-        {
-          "date": "2026-08-28",
-          "stars": 18133
-        },
         {
           "date": "2026-08-29",
           "stars": 18134
@@ -7260,15 +7256,14 @@
         {
           "date": "2026-11-26",
           "stars": 18208
+        },
+        {
+          "date": "2026-11-27",
+          "stars": 18210
         }
       ],
       "rank": 9,
       "rank_history": [
-        {
-          "date": "2026-08-28",
-          "rank": 9,
-          "momentum": 47
-        },
         {
           "date": "2026-08-29",
           "rank": 9,
@@ -7713,6 +7708,11 @@
           "date": "2026-11-26",
           "rank": 9,
           "momentum": 66
+        },
+        {
+          "date": "2026-11-27",
+          "rank": 9,
+          "momentum": 65
         }
       ],
       "rank_prev": 9,
@@ -7726,36 +7726,32 @@
       "owner": "google-gemini",
       "category": "CLI",
       "blurb": "Google's open-source AI agent that brings Gemini to your terminal.",
-      "stars": 109187,
-      "forks": 15010,
-      "open_issues": 751,
+      "stars": 109247,
+      "forks": 15017,
+      "open_issues": 758,
       "contributors": 703,
-      "open_prs": 270,
+      "open_prs": 274,
       "release_cadence_days": 2.1,
       "language": "TypeScript",
       "archived": false,
       "homepage": "https://geminicli.com",
       "html_url": "https://github.com/google-gemini/gemini-cli",
-      "pushed_at": "2026-11-26T01:12:06Z",
+      "pushed_at": "2026-11-27T10:00:19Z",
       "last_release": "v0.71.1",
       "last_release_at": "2026-11-24T03:50:24Z",
       "monthly_commits": [
         47,
-        48,
+        49,
         61,
-        53,
-        99,
-        106
+        52,
+        109,
+        96
       ],
-      "recent4w_commits": 106,
-      "prior4w_commits": 99,
-      "commit_delta": 7,
-      "momentum": 50,
+      "recent4w_commits": 96,
+      "prior4w_commits": 109,
+      "commit_delta": -13,
+      "momentum": 47,
       "stars_history": [
-        {
-          "date": "2026-08-28",
-          "stars": 106730
-        },
         {
           "date": "2026-08-29",
           "stars": 106742
@@ -8111,15 +8107,14 @@
         {
           "date": "2026-11-26",
           "stars": 109187
+        },
+        {
+          "date": "2026-11-27",
+          "stars": 109247
         }
       ],
       "rank": 10,
       "rank_history": [
-        {
-          "date": "2026-08-28",
-          "rank": 10,
-          "momentum": 46
-        },
         {
           "date": "2026-08-29",
           "rank": 10,
@@ -8564,6 +8559,11 @@
           "date": "2026-11-26",
           "rank": 10,
           "momentum": 50
+        },
+        {
+          "date": "2026-11-27",
+          "rank": 10,
+          "momentum": 47
         }
       ],
       "rank_prev": 10,
@@ -8577,11 +8577,11 @@
       "owner": "cline",
       "category": "IDE / Editor",
       "blurb": "Autonomous coding agent right in your IDE (VS Code).",
-      "stars": 71917,
-      "forks": 7973,
-      "open_issues": 1831,
+      "stars": 71951,
+      "forks": 7978,
+      "open_issues": 1828,
       "contributors": 356,
-      "open_prs": 883,
+      "open_prs": 881,
       "release_cadence_days": 0.0,
       "language": "TypeScript",
       "archived": false,
@@ -8591,22 +8591,18 @@
       "last_release": "v4.1.28",
       "last_release_at": "2026-11-26T09:57:49Z",
       "monthly_commits": [
-        418,
-        286,
-        455,
-        290,
+        424,
+        316,
+        425,
+        292,
         254,
-        89
+        81
       ],
-      "recent4w_commits": 89,
+      "recent4w_commits": 81,
       "prior4w_commits": 254,
-      "commit_delta": -165,
-      "momentum": 41,
+      "commit_delta": -173,
+      "momentum": 39,
       "stars_history": [
-        {
-          "date": "2026-08-28",
-          "stars": 67078
-        },
         {
           "date": "2026-08-29",
           "stars": 67115
@@ -8962,15 +8958,14 @@
         {
           "date": "2026-11-26",
           "stars": 71917
+        },
+        {
+          "date": "2026-11-27",
+          "stars": 71951
         }
       ],
       "rank": 11,
       "rank_history": [
-        {
-          "date": "2026-08-28",
-          "rank": 2,
-          "momentum": 96
-        },
         {
           "date": "2026-08-29",
           "rank": 2,
@@ -9415,6 +9410,11 @@
           "date": "2026-11-26",
           "rank": 11,
           "momentum": 41
+        },
+        {
+          "date": "2026-11-27",
+          "rank": 11,
+          "momentum": 39
         }
       ],
       "rank_prev": 11,
@@ -9428,9 +9428,9 @@
       "owner": "continuedev",
       "category": "IDE / Editor",
       "blurb": "Build, share & run custom AI code agents inside your IDE.",
-      "stars": 36573,
-      "forks": 5597,
-      "open_issues": 862,
+      "stars": 36584,
+      "forks": 5592,
+      "open_issues": 861,
       "contributors": 507,
       "open_prs": 595,
       "release_cadence_days": 3.3,
@@ -9438,7 +9438,7 @@
       "archived": false,
       "homepage": "https://continue.dev",
       "html_url": "https://github.com/continuedev/continue",
-      "pushed_at": "2026-11-26T10:09:54Z",
+      "pushed_at": "2026-11-27T03:39:02Z",
       "last_release": "v2.0.0-vscode",
       "last_release_at": "2026-06-19T00:24:01Z",
       "monthly_commits": [
@@ -9454,10 +9454,6 @@
       "commit_delta": 0,
       "momentum": 21,
       "stars_history": [
-        {
-          "date": "2026-08-28",
-          "stars": 35666
-        },
         {
           "date": "2026-08-29",
           "stars": 35677
@@ -9813,15 +9809,14 @@
         {
           "date": "2026-11-26",
           "stars": 36573
+        },
+        {
+          "date": "2026-11-27",
+          "stars": 36584
         }
       ],
       "rank": 12,
       "rank_history": [
-        {
-          "date": "2026-08-28",
-          "rank": 12,
-          "momentum": 21
-        },
         {
           "date": "2026-08-29",
           "rank": 12,
@@ -10266,6 +10261,11 @@
           "date": "2026-11-26",
           "rank": 12,
           "momentum": 21
+        },
+        {
+          "date": "2026-11-27",
+          "rank": 12,
+          "momentum": 21
         }
       ],
       "rank_prev": 12,
@@ -10279,11 +10279,11 @@
       "owner": "Aider-AI",
       "category": "CLI",
       "blurb": "AI pair programming in your terminal \u2014 edits across your repo.",
-      "stars": 50270,
-      "forks": 5192,
-      "open_issues": 1995,
+      "stars": 50288,
+      "forks": 5195,
+      "open_issues": 1998,
       "contributors": 182,
-      "open_prs": 573,
+      "open_prs": 575,
       "release_cadence_days": 10.6,
       "language": "Python",
       "archived": false,
@@ -10305,10 +10305,6 @@
       "commit_delta": 0,
       "momentum": 10,
       "stars_history": [
-        {
-          "date": "2026-08-28",
-          "stars": 48556
-        },
         {
           "date": "2026-08-29",
           "stars": 48570
@@ -10664,15 +10660,14 @@
         {
           "date": "2026-11-26",
           "stars": 50270
+        },
+        {
+          "date": "2026-11-27",
+          "stars": 50288
         }
       ],
       "rank": 13,
       "rank_history": [
-        {
-          "date": "2026-08-28",
-          "rank": 13,
-          "momentum": 10
-        },
         {
           "date": "2026-08-29",
           "rank": 13,
@@ -11117,6 +11112,11 @@
           "date": "2026-11-26",
           "rank": 13,
           "momentum": 10
+        },
+        {
+          "date": "2026-11-27",
+          "rank": 13,
+          "momentum": 10
         }
       ],
       "rank_prev": 13,
@@ -11130,7 +11130,7 @@
       "owner": "SWE-agent",
       "category": "Autonomous",
       "blurb": "Princeton's agent that fixes real GitHub issues autonomously.",
-      "stars": 20876,
+      "stars": 20883,
       "forks": 2289,
       "open_issues": 185,
       "contributors": 101,
@@ -11145,7 +11145,7 @@
       "last_release_at": "2025-05-22T16:11:39Z",
       "monthly_commits": [
         16,
-        8,
+        7,
         0,
         0,
         0,
@@ -11156,10 +11156,6 @@
       "commit_delta": 0,
       "momentum": 10,
       "stars_history": [
-        {
-          "date": "2026-08-28",
-          "stars": 20167
-        },
         {
           "date": "2026-08-29",
           "stars": 20171
@@ -11515,15 +11511,14 @@
         {
           "date": "2026-11-26",
           "stars": 20876
+        },
+        {
+          "date": "2026-11-27",
+          "stars": 20883
         }
       ],
       "rank": 14,
       "rank_history": [
-        {
-          "date": "2026-08-28",
-          "rank": 14,
-          "momentum": 0
-        },
         {
           "date": "2026-08-29",
           "rank": 14,
@@ -11966,6 +11961,11 @@
         },
         {
           "date": "2026-11-26",
+          "rank": 14,
+          "momentum": 10
+        },
+        {
+          "date": "2026-11-27",
           "rank": 14,
           "momentum": 10
         }
